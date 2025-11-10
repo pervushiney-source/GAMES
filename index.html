@@ -236,6 +236,7 @@
     let bonusActive = false;
     let bonusMultiplier = 1;
     let countdown = 5;
+    let ballLost = false;
     
     // Размеры
     const brickWidth = 25;
@@ -352,16 +353,22 @@
     // Сброс мяча
     function resetBall() {
       ball.x = paddle.x + paddle.width / 2 - ball.width / 2;
-      ball.y = paddle.y - ball.height;
+      ball.y = paddle.y - ball.height - 5; // Немного выше платформы
       ball.dx = 0;
       ball.dy = 0;
+      ballLost = false;
     }
 
     // Запуск мяча
     function launchBall() {
       if (ball.dx === 0 && ball.dy === 0) {
-        ball.dx = ball.speed;
-        ball.dy = -ball.speed;
+        // Случайный угол запуска (от -60 до 60 градусов)
+        const angle = (Math.random() * 120 - 60) * Math.PI / 180;
+        ball.dx = Math.cos(angle) * ball.speed;
+        ball.dy = Math.sin(angle) * ball.speed;
+        
+        // Гарантируем, что мяч летит вверх
+        if (ball.dy > 0) ball.dy = -ball.dy;
       }
     }
 
@@ -430,6 +437,29 @@
       gameLoop();
     }
 
+    // Перезапуск после потери мяча
+    function restartAfterBallLoss() {
+      gameRunning = false;
+      ballLost = true;
+      countdown = 3;
+      countdownElement.style.display = 'flex';
+      countdownElement.textContent = countdown;
+      
+      const countdownInterval = setInterval(() => {
+        countdown--;
+        countdownElement.textContent = countdown;
+        
+        if (countdown <= 0) {
+          clearInterval(countdownInterval);
+          countdownElement.style.display = 'none';
+          resetBall();
+          gameRunning = true;
+          launchBall();
+          gameLoop();
+        }
+      }, 1000);
+    }
+
     // Игровой цикл
     function gameLoop() {
       if (!gameRunning) return;
@@ -446,27 +476,51 @@
       ball.y += ball.dy;
       
       // Столкновение со стенами
-      if (ball.x < wallSize || ball.x + ball.width > canvas.width - wallSize) {
-        ball.dx = -ball.dx;
+      if (ball.x < wallSize) {
+        ball.x = wallSize;
+        ball.dx = Math.abs(ball.dx);
+      } else if (ball.x + ball.width > canvas.width - wallSize) {
+        ball.x = canvas.width - wallSize - ball.width;
+        ball.dx = -Math.abs(ball.dx);
       }
+      
       if (ball.y < wallSize) {
-        ball.dy = -ball.dy;
+        ball.y = wallSize;
+        ball.dy = Math.abs(ball.dy);
       }
       
       // Потеря мяча
       if (ball.y > canvas.height) {
-        lives--;
-        updateStats();
-        if (lives <= 0) {
-          gameOver();
-        } else {
-          resetBall();
+        if (!ballLost) {
+          lives--;
+          updateStats();
+          if (lives <= 0) {
+            gameOver();
+          } else {
+            restartAfterBallLoss();
+          }
         }
+        return;
       }
       
       // Столкновение с платформой
       if (checkCollision(ball, paddle)) {
-        ball.dy = -Math.abs(ball.dy);
+        // Вычисляем точку удара относительно центра платформы
+        const hitPos = (ball.x + ball.width/2 - paddle.x) / paddle.width;
+        
+        // Нормализуем от -1 до 1
+        const normalizedHitPos = hitPos * 2 - 1;
+        
+        // Угол отскока (от -75 до 75 градусов)
+        const maxBounceAngle = 75 * Math.PI / 180;
+        const bounceAngle = normalizedHitPos * maxBounceAngle;
+        
+        // Устанавливаем новое направление
+        const speed = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
+        ball.dx = Math.sin(bounceAngle) * speed;
+        ball.dy = -Math.abs(Math.cos(bounceAngle) * speed);
+        
+        // Корректируем позицию мяча
         ball.y = paddle.y - ball.height;
       }
       
@@ -487,10 +541,32 @@
             });
           }
           
+          // Определяем сторону столкновения для правильного отскока
+          const ballCenterX = ball.x + ball.width/2;
+          const ballCenterY = ball.y + ball.height/2;
+          const brickCenterX = brick.x + brick.width/2;
+          const brickCenterY = brick.y + brick.height/2;
+          
+          const dx = ballCenterX - brickCenterX;
+          const dy = ballCenterY - brickCenterY;
+          const width = (ball.width + brick.width) / 2;
+          const height = (ball.height + brick.height) / 2;
+          const crossWidth = width * dy;
+          const crossHeight = height * dx;
+          
+          if (Math.abs(dx) <= width && Math.abs(dy) <= height) {
+            if (crossWidth > crossHeight) {
+              // Столкновение сверху или снизу
+              ball.dy = -ball.dy;
+            } else {
+              // Столкновение слева или справа
+              ball.dx = -ball.dx;
+            }
+          }
+          
           bricks.splice(i, 1);
           score += 10 * bonusMultiplier;
           updateStats();
-          ball.dy = -ball.dy;
           break;
         }
       }
@@ -625,8 +701,8 @@
       canvas.width = containerWidth;
       canvas.height = containerWidth / aspectRatio;
       
-      // Позиционируем платформу
-      paddle.y = canvas.height - 60;
+      // Позиционируем платформу НИЖЕ (ближе к низу экрана)
+      paddle.y = canvas.height - 30; // Было 60, стало 30
       paddle.x = (canvas.width - paddle.width) / 2;
       
       resetBall();
