@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Арканоид - PERVUSHIN.EVENT</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      touch-action: manipulation;
+    }
+    
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+    
+    .game-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    
+    .game-header {
+      text-align: center;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+    
+    .game-title {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      color: #ffcc00;
+      text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+    }
+    
+    .game-stats {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 8px 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.9rem;
+    }
+    
+    .stat-value {
+      color: #ffcc00;
+      font-weight: bold;
+    }
+    
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 2px solid #ffcc00;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(255, 204, 0, 0.3);
+      background: #0f3460;
+      touch-action: none;
+    }
+    
+    .touch-controls {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 15px;
+      padding: 0 10px;
+    }
+    
+    .touch-btn {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      transition: all 0.1s;
+      touch-action: manipulation;
+    }
+    
+    .touch-btn:active {
+      background: rgba(255, 255, 255, 0.4);
+      transform: scale(0.95);
+    }
+    
+    .launch-btn {
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 204, 0, 0.3);
+      border: 2px solid #ffcc00;
+      font-size: 0.9rem;
+      text-align: center;
+      line-height: 1.2;
+      padding-top: 10px;
+    }
+    
+    .game-over, .level-complete {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.9);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      border: 2px solid #ffcc00;
+      width: 80%;
+      max-width: 300px;
+      display: none;
+      z-index: 10;
+    }
+    
+    .level-complete {
+      border-color: #00cc66;
+    }
+    
+    .game-over h2, .level-complete h2 {
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+    
+    .game-over h2 {
+      color: #ffcc00;
+    }
+    
+    .level-complete h2 {
+      color: #00cc66;
+    }
+    
+    .btn {
+      background: #ffcc00;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: bold;
+      width: 100%;
+      transition: all 0.3s;
+    }
+    
+    .btn:active {
+      background: #ffd633;
+      transform: scale(0.98);
+    }
+    
+    .mobile-hint {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    /* Вертикальная ориентация */
+    @media (max-height: 700px) {
+      .game-title {
+        font-size: 1.5rem;
+      }
+      
+      .game-stats {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+      }
+      
+      .touch-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+      }
+      
+      .launch-btn {
+        width: 70px;
+        height: 70px;
+        font-size: 0.8rem;
+      }
+    }
+    
+    /* Горизонтальная ориентация */
+    @media (max-width: 700px) and (orientation: landscape) {
+      body {
+        flex-direction: row;
+        padding: 5px;
+      }
+      
+      .game-container {
+        max-width: 70%;
+        margin-right: 10px;
+      }
+      
+      .game-header {
+        margin-bottom: 5px;
+      }
+      
+      .touch-controls {
+        flex-direction: column;
+        width: auto;
+        margin-top: 0;
+        margin-left: 10px;
+      }
+      
+      .touch-btn {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 10px;
+      }
+      
+      .launch-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 0.7rem;
+        padding-top: 5px;
+      }
+    }
+    
+    /* Очень маленькие экраны */
+    @media (max-width: 350px) {
+      .game-title {
+        font-size: 1.3rem;
+      }
+      
+      .game-stats {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+      }
+      
+      .touch-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+      }
+      
+      .launch-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div class="game-header">
+      <h1 class="game-title">PERVUSHIN.EVENT</h1>
+      <div class="game-stats">
+        <div class="stat">ГОНОРАР: <span id="score" class="stat-value">0</span></div>
+        <div class="stat">Уровень: <span id="level" class="stat-value">1</span></div>
+        <div class="stat">Жизни: <span id="lives" class="stat-value">3</span></div>
+      </div>
+    </div>
+    
+    <canvas id="game"></canvas>
+    
+    <div class="game-over" id="gameOver">
+      <h2>ИГРА ОКОНЧЕНА</h2>
+      <p>Ваш ГОНОРАР: <span id="finalScore">0</span></p>
+      <button class="btn" id="restartBtn">Играть снова</button>
+    </div>
+    
+    <div class="level-complete" id="levelComplete">
+      <h2>УРОВЕНЬ ПРОЙДЕН!</h2>
+      <p>Переходим на следующий уровень</p>
+      <button class="btn" id="nextLevelBtn">Продолжить</button>
+    </div>
+  </div>
+  
+  <div class="touch-controls">
+    <div class="touch-btn left-btn">←</div>
+    <div class="touch-btn launch-btn">ЗАПУСК</div>
+    <div class="touch-btn right-btn">→</div>
+  </div>
+  
+  <div class="mobile-hint">
+    Касайтесь экрана для управления платформой
+  </div>
+
+  <script>
+    // Получаем элементы DOM
+    const canvas = document.getElementById('game');
+    const context = canvas.getContext('2d');
+    const scoreElement = document.getElementById('score');
+    const levelElement = document.getElementById('level');
+    const livesElement = document.getElementById('lives');
+    const gameOverScreen = document.getElementById('gameOver');
+    const finalScoreElement = document.getElementById('finalScore');
+    const restartBtn = document.getElementById('restartBtn');
+    const levelCompleteScreen = document.getElementById('levelComplete');
+    const nextLevelBtn = document.getElementById('nextLevelBtn');
+    const leftBtn = document.querySelector('.left-btn');
+    const rightBtn = document.querySelector('.right-btn');
+    const launchBtn = document.querySelector('.launch-btn');
+
+    // Адаптивный размер холста
+    function resizeCanvas() {
+      const container = canvas.parentElement;
+      const containerWidth = container.clientWidth;
+      
+      // Сохраняем соотношение сторон оригинального холста (400x500)
+      const aspectRatio = 400 / 500;
+      const newWidth = containerWidth;
+      const newHeight = containerWidth / aspectRatio;
+      
+      // Устанавливаем новые размеры
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+      
+      // Масштабируем игровые объекты
+      scaleGameObjects();
+    }
+    
+    // Масштабирование игровых объектов
+    function scaleGameObjects() {
+      const scaleX = canvas.width / 400;
+      const scaleY = canvas.height / 500;
+      
+      // Масштабируем параметры кирпичей
+      scaledBrickWidth = Math.floor(25 * scaleX);
+      scaledBrickHeight = Math.floor(12 * scaleY);
+      scaledBrickGap = Math.floor(2 * scaleX);
+      scaledWallSize = Math.floor(12 * scaleX);
+      
+      // Масштабируем платформу
+      paddle.width = Math.floor(70 * scaleX);
+      paddle.height = Math.floor(12 * scaleY);
+      paddle.y = canvas.height - 60 * scaleY;
+      
+      // Масштабируем шарик
+      ball.width = Math.floor(8 * scaleX);
+      ball.height = Math.floor(8 * scaleY);
+      
+      // Пересоздаем уровень с новыми размерами
+      createLevel(levels[level - 1]);
+      
+      // Сбрасываем позицию шарика
+      resetBall();
+    }
+
+    // Игровые переменные
+    let score = 0;
+    let level = 1;
+    let lives = 3;
+    let gameRunning = true;
+    
+    // Масштабированные параметры
+    let scaledBrickWidth, scaledBrickHeight, scaledBrickGap, scaledWallSize;
+
+    // Определяем уровни
+    const levels = [
+      // Уровень 1
+      [
+        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
+        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
+        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
+        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
+        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
+        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
+        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
+        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
+        ['S','S','S','S','S','S','S','S','S','S','S','S','S','S'],
+        ['S','S','S','S','S','S','S','S','S','S','S','S','S','S'],
+        ['N','N','N','N','N','N','N','N','N','N','N','N','N','N'],
+        ['N','N','N','N','N','N','N','N','N','N','N','N','N','N'],
+        ['A','A','A','A','A','A','A','A','A','A','A','A','A','A'],
+        ['A','A','A','A','A','A','A','A','A','A','A','A','A','A']
+      ]
+    ];
+
+    // Сопоставляем буквы с цветами и названиями городов
+    const colorMap = {
+      'M': { color: '#ff4757', city: 'МСК' },   // Красный
+      'S': { color: '#ffa502', city: 'СПБ' },   // Оранжевый
+      'N': { color: '#2ed573', city: 'НСК' },   // Зеленый
+      'A': { color: '#ffcc00', city: 'АКСУ' }    // Желтый
+    };
+
+    // Массив кирпичей
+    let bricks = [];
+
+    // Создаем уровень
+    function createLevel(levelData) {
+      bricks = [];
+      
+      // Используем масштабированные размеры
+      const brickWidth = scaledBrickWidth;
+      const brickHeight = scaledBrickHeight;
+      const brickGap = scaledBrickGap;
+      const wallSize = scaledWallSize;
+      
+      for (let row = 0; row < levelData.length; row++) {
+        for (let col = 0; col < levelData[row].length; col++) {
+          const colorCode = levelData[row][col];
+          
+          // Пропускаем пустые ячейки
+          if (colorCode === '') continue;
+          
+          const brickInfo = colorMap[colorCode];
+          
+          bricks.push({
+            x: wallSize + (brickWidth + brickGap) * col,
+            y: wallSize + (brickHeight + brickGap) * row,
+            color: brickInfo.color,
+            city: brickInfo.city,
+            width: brickWidth,
+            height: brickHeight,
+            hit: false
+          });
+        }
+      }
+    }
+
+    // Платформа игрока
+    const paddle = {
+      x: 0, // Будет установлено после масштабирования
+      y: 0, // Будет установлено после масштабирования
+      width: 0, // Будет установлено после масштабирования
+      height: 0, // Будет установлено после масштабирования
+      dx: 0,
+      speed: 8
+    };
+
+    // Шарик
+    const ball = {
+      x: 0, // Будет установлено после масштабирования
+      y: 0, // Будет установлено после масштабирования
+      width: 0, // Будет установлено после масштабирования
+      height: 0, // Будет установлено после масштабирования
+      speed: 4,
+      dx: 0,
+      dy: 0
+    };
+
+    // Частицы для эффектов
+    let particles = [];
+
+    // Создание частиц при разрушении кирпича
+    function createParticles(x, y, color) {
+      for (let i = 0; i < 5; i++) {
+        particles.push({
+          x: x + scaledBrickWidth / 2,
+          y: y + scaledBrickHeight / 2,
+          size: Math.random() * 3 + 1,
+          color: color,
+          speedX: (Math.random() - 0.5) * 4,
+          speedY: (Math.random() - 0.5) * 4,
+          life: 30
+        });
+      }
+    }
+
+    // Обновление частиц
+    function updateParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.life--;
+        
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+    }
+
+    // Отрисовка частиц
+    function drawParticles() {
+      particles.forEach(p => {
+        context.globalAlpha = p.life / 30;
+        context.fillStyle = p.color;
+        context.beginPath();
+        context.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        context.fill();
+      });
+      context.globalAlpha = 1;
+    }
+
+    // Проверка столкновений
+    function collides(obj1, obj2) {
+      return obj1.x < obj2.x + obj2.width &&
+             obj1.x + obj1.width > obj2.x &&
+             obj1.y < obj2.y + obj2.height &&
+             obj1.y + obj1.height > obj2.y;
+    }
+
+    // Обновление статистики
+    function updateStats() {
+      scoreElement.textContent = score;
+      levelElement.textContent = level;
+      livesElement.textContent = lives;
+    }
+
+    // Потеря жизни
+    function loseLife() {
+      lives--;
+      updateStats();
+      
+      if (lives <= 0) {
+        gameOver();
+      } else {
+        resetBall();
+      }
+    }
+
+    // Сброс шарика
+    function resetBall() {
+      ball.x = paddle.x + paddle.width / 2 - ball.width / 2;
+      ball.y = paddle.y - ball.height;
+      ball.dx = 0;
+      ball.dy = 0;
+    }
+
+    // Завершение уровня
+    function completeLevel() {
+      levelCompleteScreen.style.display = 'block';
+      gameRunning = false;
+    }
+
+    // Завершение игры
+    function gameOver() {
+      finalScoreElement.textContent = score;
+      gameOverScreen.style.display = 'block';
+      gameRunning = false;
+    }
+
+    // Начало нового уровня
+    function nextLevel() {
+      level++;
+      if (level > levels.length) {
+        // Все уровни пройдены
+        level = 1;
+        score += 1000; // Бонус за прохождение всех уровней
+      }
+      
+      createLevel(levels[level - 1]);
+      resetBall();
+      levelCompleteScreen.style.display = 'none';
+      gameRunning = true;
+      updateStats();
+    }
+
+    // Перезапуск игры
+    function restartGame() {
+      score = 0;
+      level = 1;
+      lives = 3;
+      createLevel(levels[level - 1]);
+      resetBall();
+      gameOverScreen.style.display = 'none';
+      gameRunning = true;
+      updateStats();
+    }
+
+    // Главный игровой цикл
+    function loop() {
+      if (!gameRunning) {
+        requestAnimationFrame(loop);
+        return;
+      }
+      
+      requestAnimationFrame(loop);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Движение платформы
+      paddle.x += paddle.dx;
+      
+      // Ограничения для платформы
+      if (paddle.x < scaledWallSize) {
+        paddle.x = scaledWallSize;
+      } else if (paddle.x + paddle.width > canvas.width - scaledWallSize) {
+        paddle.x = canvas.width - scaledWallSize - paddle.width;
+      }
+      
+      // Движение шарика
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+      
+      // Столкновения со стенами
+      if (ball.x < scaledWallSize) {
+        ball.x = scaledWallSize;
+        ball.dx *= -1;
+      } else if (ball.x + ball.width > canvas.width - scaledWallSize) {
+        ball.x = canvas.width - scaledWallSize - ball.width;
+        ball.dx *= -1;
+      }
+      
+      if (ball.y < scaledWallSize) {
+        ball.y = scaledWallSize;
+        ball.dy *= -1;
+      }
+      
+      // Потеря шарика
+      if (ball.y > canvas.height) {
+        loseLife();
+      }
+      
+      // Столкновение с платформой
+      if (collides(ball, paddle)) {
+        // Изменяем угол отскока в зависимости от места удара
+        const hitPos = (ball.x + ball.width / 2 - paddle.x) / paddle.width;
+        const angle = hitPos * Math.PI - Math.PI / 2;
+        
+        ball.dx = ball.speed * Math.cos(angle);
+        ball.dy = -ball.speed * Math.sin(angle);
+        
+        // Сдвигаем шарик выше платформы
+        ball.y = paddle.y - ball.height;
+      }
+      
+      // Столкновения с кирпичами
+      for (let i = bricks.length - 1; i >= 0; i--) {
+        const brick = bricks[i];
+        
+        if (collides(ball, brick)) {
+          // Создаем частицы
+          createParticles(brick.x, brick.y, brick.color);
+          
+          // Удаляем кирпич
+          bricks.splice(i, 1);
+          
+          // Добавляем очки
+          score += 10;
+          updateStats();
+          
+          // Определяем сторону столкновения
+          const ballCenterX = ball.x + ball.width / 2;
+          const ballCenterY = ball.y + ball.height / 2;
+          const brickCenterX = brick.x + brick.width / 2;
+          const brickCenterY = brick.y + brick.height / 2;
+          
+          const dx = ballCenterX - brickCenterX;
+          const dy = ballCenterY - brickCenterY;
+          const width = (ball.width + brick.width) / 2;
+          const height = (ball.height + brick.height) / 2;
+          const crossWidth = width * dy;
+          const crossHeight = height * dx;
+          
+          if (Math.abs(dx) <= width && Math.abs(dy) <= height) {
+            if (crossWidth > crossHeight) {
+              ball.dy *= -1;
+            } else {
+              ball.dx *= -1;
+            }
+          }
+          
+          break;
+        }
+      }
+      
+      // Проверка завершения уровня
+      if (bricks.length === 0) {
+        completeLevel();
+      }
+      
+      // Обновление частиц
+      updateParticles();
+      
+      // Отрисовка
+      
+      // Стены
+      context.fillStyle = 'rgba(255, 255, 255, 0.2)';
+      context.fillRect(0, 0, canvas.width, scaledWallSize);
+      context.fillRect(0, 0, scaledWallSize, canvas.height);
+      context.fillRect(canvas.width - scaledWallSize, 0, scaledWallSize, canvas.height);
+      
+      // Шарик
+      if (ball.dx || ball.dy) {
+        context.fillStyle = '#ffffff';
+        context.beginPath();
+        context.arc(ball.x + ball.width / 2, ball.y + ball.height / 2, ball.width / 2, 0, Math.PI * 2);
+        context.fill();
+        
+        // Добавляем свечение шарику
+        context.shadowColor = '#ffffff';
+        context.shadowBlur = 10;
+        context.fill();
+        context.shadowBlur = 0;
+      }
+      
+      // Кирпичи
+      bricks.forEach(brick => {
+        context.fillStyle = brick.color;
+        context.fillRect(brick.x, brick.y, brick.width, brick.height);
+        
+        // Добавляем градиент для объема
+        const gradient = context.createLinearGradient(brick.x, brick.y, brick.x, brick.y + brick.height);
+        gradient.addColorStop(0, brick.color);
+        gradient.addColorStop(1, darkenColor(brick.color, 30));
+        
+        context.fillStyle = gradient;
+        context.fillRect(brick.x, brick.y, brick.width, brick.height);
+        
+        // Обводка
+        context.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        context.lineWidth = 1;
+        context.strokeRect(brick.x, brick.y, brick.width, brick.height);
+        
+        // Текст с названием города
+        context.fillStyle = '#ffffff';
+        context.font = `bold ${Math.max(8, Math.floor(scaledBrickHeight * 0.6))}px Arial`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        
+        context.fillText(
+          brick.city, 
+          brick.x + brick.width / 2, 
+          brick.y + brick.height / 2
+        );
+      });
+      
+      // Платформа с надписью PERVUSHIN.EVENT
+      const paddleGradient = context.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height);
+      paddleGradient.addColorStop(0, '#00d2ff');
+      paddleGradient.addColorStop(1, '#3a7bd5');
+      
+      context.fillStyle = paddleGradient;
+      context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+      
+      // Скругленные края платформы
+      context.fillStyle = '#3a7bd5';
+      context.beginPath();
+      context.arc(paddle.x, paddle.y + paddle.height / 2, paddle.height / 2, Math.PI / 2, Math.PI * 1.5);
+      context.fill();
+      
+      context.beginPath();
+      context.arc(paddle.x + paddle.width, paddle.y + paddle.height / 2, paddle.height / 2, Math.PI * 1.5, Math.PI / 2);
+      context.fill();
+      
+      // Текст на платформе
+      context.fillStyle = '#ffffff';
+      context.font = `bold ${Math.max(10, Math.floor(paddle.height * 0.7))}px Arial`;
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      
+      // Обрезаем текст, если он не помещается
+      let platformText = "PERVUSHIN.EVENT";
+      const maxWidth = paddle.width - 10;
+      let textWidth = context.measureText(platformText).width;
+      
+      // Если текст не помещается, сокращаем его
+      while (textWidth > maxWidth && platformText.length > 10) {
+        platformText = platformText.substring(0, platformText.length - 1);
+        textWidth = context.measureText(platformText).width;
+      }
+      
+      context.fillText(
+        platformText, 
+        paddle.x + paddle.width / 2, 
+        paddle.y + paddle.height / 2
+      );
+      
+      // Частицы
+      drawParticles();
+    }
+
+    // Функция для затемнения цвета
+    function darkenColor(color, percent) {
+      const num = parseInt(color.slice(1), 16);
+      const amt = Math.round(2.55 * percent);
+      const R = (num >> 16) - amt;
+      const G = (num >> 8 & 0x00FF) - amt;
+      const B = (num & 0x0000FF) - amt;
+      
+      return '#' + (
+        0x1000000 +
+        (R < 0 ? 0 : R) * 0x10000 +
+        (G < 0 ? 0 : G) * 0x100 +
+        (B < 0 ? 0 : B)
+      ).toString(16).slice(1);
+    }
+
+    // Обработчики событий для кнопок
+    leftBtn.addEventListener('touchstart', () => {
+      paddle.dx = -paddle.speed;
+    });
+    
+    leftBtn.addEventListener('touchend', () => {
+      paddle.dx = 0;
+    });
+    
+    rightBtn.addEventListener('touchstart', () => {
+      paddle.dx = paddle.speed;
+    });
+    
+    rightBtn.addEventListener('touchend', () => {
+      paddle.dx = 0;
+    });
+    
+    launchBtn.addEventListener('touchstart', () => {
+      if (ball.dx === 0 && ball.dy === 0) {
+        ball.dx = ball.speed;
+        ball.dy = -ball.speed;
+      }
+    });
+
+    // Обработчики событий для касаний на холсте (альтернативное управление)
+    let touchX = 0;
+    let isTouching = false;
+    
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      touchX = touch.clientX;
+      isTouching = true;
+    });
+    
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      if (!isTouching) return;
+      
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - touchX;
+      
+      // Прямое управление позицией платформы
+      paddle.x += deltaX * 1.5;
+      
+      // Ограничения для платформы
+      if (paddle.x < scaledWallSize) {
+        paddle.x = scaledWallSize;
+      } else if (paddle.x + paddle.width > canvas.width - scaledWallSize) {
+        paddle.x = canvas.width - scaledWallSize - paddle.width;
+      }
+      
+      touchX = touch.clientX;
+    });
+    
+    canvas.addEventListener('touchend', () => {
+      isTouching = false;
+    });
+
+    // Обработчики для кнопок интерфейса
+    restartBtn.addEventListener('click', restartGame);
+    nextLevelBtn.addEventListener('click', nextLevel);
+
+    // Обработчик изменения размера окна
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+    });
+
+    // Запуск игры
+    resizeCanvas();
+    updateStats();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
