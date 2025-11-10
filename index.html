@@ -131,7 +131,7 @@
       100% { opacity: 0.5; }
     }
     
-    .game-over, .level-complete, .thanks-screen {
+    .game-over, .thanks-screen {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -148,15 +148,11 @@
       box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
     }
     
-    .level-complete {
-      border-color: #ffd700;
-    }
-    
     .thanks-screen {
       border-color: #ffd700;
     }
     
-    .game-over h2, .level-complete h2, .thanks-screen h2 {
+    .game-over h2, .thanks-screen h2 {
       margin-bottom: 15px;
       font-size: 1.5rem;
       color: #ffd700;
@@ -200,70 +196,6 @@
       background: #ffed4e;
       transform: scale(0.98);
     }
-    
-    .mobile-hint {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 0.8rem;
-      color: rgba(255, 215, 0, 0.7);
-    }
-    
-    /* Вертикальная ориентация */
-    @media (max-height: 700px) {
-      .game-title {
-        font-size: 1.5rem;
-      }
-      
-      .game-stats {
-        padding: 5px 10px;
-        font-size: 0.8rem;
-      }
-      
-      .start-title {
-        font-size: 1.5rem;
-      }
-      
-      .start-hint {
-        font-size: 1rem;
-      }
-    }
-    
-    /* Горизонтальная ориентация */
-    @media (max-width: 700px) and (orientation: landscape) {
-      body {
-        flex-direction: row;
-        padding: 5px;
-      }
-      
-      .game-container {
-        max-width: 70%;
-        margin-right: 10px;
-      }
-      
-      .game-header {
-        margin-bottom: 5px;
-      }
-    }
-    
-    /* Очень маленькие экраны */
-    @media (max-width: 350px) {
-      .game-title {
-        font-size: 1.3rem;
-      }
-      
-      .game-stats {
-        font-size: 0.7rem;
-        padding: 4px 8px;
-      }
-      
-      .start-title {
-        font-size: 1.3rem;
-      }
-      
-      .start-hint {
-        font-size: 0.9rem;
-      }
-    }
   </style>
 </head>
 <body>
@@ -271,11 +203,11 @@
     <div class="game-header">
       <h1 class="game-title">PERVUSHIN.EVENT</h1>
       <div class="game-stats">
-        <div class="stat">ГОНОРАР: <span id="score" class="stat-value">0</span></div>
-        <div class="stat">Уровень: <span id="level" class="stat-value">1</span></div>
-        <div class="stat">СЕЗОН: <span id="lives" class="stat-value">3</span></div>
+        <div class="stat">ГОНОРАР: <span id="score">0</span></div>
+        <div class="stat">Уровень: <span id="level">1</span></div>
+        <div class="stat">СЕЗОН: <span id="lives">3</span></div>
+        <div class="stat">БОНУС: <span id="bonus">НЕТ</span></div>
       </div>
-      <div class="stat">БОНУС: <span id="bonus" class="stat-value">НЕТ</span></div>
     </div>
     
     <canvas id="game"></canvas>
@@ -305,39 +237,30 @@
   </div>
 
   <script>
-    // Получаем элементы DOM
+    // Инициализация элементов
     const canvas = document.getElementById('game');
     const context = canvas.getContext('2d');
-    const scoreElement = document.getElementById('score');
-    const levelElement = document.getElementById('level');
-    const livesElement = document.getElementById('lives');
-    const bonusElement = document.getElementById('bonus');
-    const gameOverScreen = document.getElementById('gameOver');
-    const finalScoreElement = document.getElementById('finalScore');
-    const restartBtn = document.getElementById('restartBtn');
-    const thanksScreen = document.getElementById('thanksScreen');
-    const bonusAmountElement = document.getElementById('bonusAmount');
-    const continueBtn = document.getElementById('continueBtn');
     const startScreen = document.getElementById('startScreen');
-
+    const gameOverScreen = document.getElementById('gameOver');
+    const thanksScreen = document.getElementById('thanksScreen');
+    
     // Игровые переменные
+    let gameStarted = false;
+    let gameRunning = false;
     let score = 0;
     let level = 1;
     let lives = 3;
-    let gameRunning = false;
-    let gameStarted = false;
     let bonusActive = false;
     let bonusMultiplier = 1;
-    let bonusTimeLeft = 0;
-    const BONUS_DURATION = 10000; // 10 секунд
-    let levelScore = 0; // Счет за текущий уровень
     
-    // Масштабированные параметры
-    let scaledBrickWidth, scaledBrickHeight, scaledBrickGap, scaledWallSize;
-
-    // Определяем уровни
+    // Размеры
+    const brickWidth = 25;
+    const brickHeight = 12;
+    const brickGap = 2;
+    const wallSize = 12;
+    
+    // Уровни
     const levels = [
-      // Уровень 1
       [
         ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
         ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
@@ -360,628 +283,118 @@
       ]
     ];
 
-    // Сопоставляем буквы с цветами и названиями городов
-    const colorMap = {
-      'M': { color: '#FFFFFF', textColor: '#000000', city: 'МСК' },   // Белый с черным текстом
-      'S': { color: '#0000FF', textColor: '#000000', city: 'СПБ' },   // Синий с черным текстом
-      'N': { color: '#FF0000', textColor: '#000000', city: 'НСК' },   // Красный с черным текстом
-      'P': { color: '#0000FF', textColor: '#FFD700', city: 'ПВЛ' },   // Синий с золотым текстом
-      'A': { color: '#0000FF', textColor: '#FFD700', city: 'АКСУ' }   // Синий с золотым текстом
+    // Цвета кирпичей
+    const brickColors = {
+      'M': { color: '#FFFFFF', textColor: '#000000', city: 'МСК' },
+      'S': { color: '#0000FF', textColor: '#000000', city: 'СПБ' },
+      'N': { color: '#FF0000', textColor: '#000000', city: 'НСК' },
+      'P': { color: '#0000FF', textColor: '#FFD700', city: 'ПВЛ' },
+      'A': { color: '#0000FF', textColor: '#FFD700', city: 'АКСУ' }
     };
 
-    // Массив кирпичей
+    // Игровые объекты
     let bricks = [];
-
-    // Массив бонусов
     let bonuses = [];
-
-    // Платформа игрока
+    let particles = [];
+    
     const paddle = {
       x: 0,
       y: 0,
-      width: 0,
-      height: 0,
-      dx: 0,
+      width: 70,
+      height: 12,
       speed: 8
     };
-
-    // Шарик с улучшенной физикой
+    
     const ball = {
       x: 0,
       y: 0,
-      width: 0,
-      height: 0,
-      baseSpeed: 5,
-      speed: 0,
+      width: 8,
+      height: 8,
       dx: 0,
       dy: 0,
-      maxBounceAngle: Math.PI / 3,
-      speedMultiplier: 1.0,
-      maxSpeedMultiplier: 2.0
+      speed: 5
     };
 
-    // Частицы для эффектов
-    let particles = [];
-
-    // Адаптивный размер холста
-    function resizeCanvas() {
-      const container = canvas.parentElement;
-      const containerWidth = container.clientWidth;
-      
-      // Сохраняем соотношение сторон оригинального холста (400x500)
-      const aspectRatio = 400 / 500;
-      const newWidth = containerWidth;
-      const newHeight = containerWidth / aspectRatio;
-      
-      // Устанавливаем новые размеры
-      canvas.width = newWidth;
-      canvas.height = newHeight;
-      
-      // Масштабируем игровые объекты
-      scaleGameObjects();
-    }
-    
-    // Масштабирование игровых объекто
-    function scaleGameObjects() {
-      const scaleX = canvas.width / 400;
-      const scaleY = canvas.height / 500;
-      
-      // Масштабируем параметры кирпичей
-      scaledBrickWidth = Math.floor(25 * scaleX);
-      scaledBrickHeight = Math.floor(12 * scaleY);
-      scaledBrickGap = Math.floor(2 * scaleX);
-      scaledWallSize = Math.floor(12 * scaleX);
-      
-      // Масштабируем платформу
-      paddle.width = Math.floor(70 * scaleX);
-      paddle.height = Math.floor(12 * scaleY);
-      paddle.y = canvas.height - 60 * scaleY;
-      paddle.x = (canvas.width - paddle.width) / 2;
-      
-      // Масштабируем шарик
-      ball.width = Math.floor(8 * scaleX);
-      ball.height = Math.floor(8 * scaleY);
-      
-      // Пересоздаем уровень с новыми размерами
-      createLevel(levels[level - 1]);
-      
-      // Сбрасываем позицию шарика
+    // Инициализация игры
+    function initGame() {
+      resizeCanvas();
+      createLevel();
       resetBall();
+      updateStats();
+      
+      // Запускаем игровой цикл
+      requestAnimationFrame(gameLoop);
     }
 
-    // Создаем уровень
-    function createLevel(levelData) {
+    // Создание уровня
+    function createLevel() {
       bricks = [];
-      bonuses = [];
-      
-      // Используем масштабированные размеры
-      const brickWidth = scaledBrickWidth;
-      const brickHeight = scaledBrickHeight;
-      const brickGap = scaledBrickGap;
-      const wallSize = scaledWallSize;
+      const levelData = levels[level - 1];
       
       for (let row = 0; row < levelData.length; row++) {
         for (let col = 0; col < levelData[row].length; col++) {
-          const colorCode = levelData[row][col];
+          const type = levelData[row][col];
+          if (!type) continue;
           
-          // Пропускаем пустые ячейки
-          if (colorCode === '') continue;
-          
-          const brickInfo = colorMap[colorCode];
-          
+          const brickInfo = brickColors[type];
           bricks.push({
             x: wallSize + (brickWidth + brickGap) * col,
             y: wallSize + (brickHeight + brickGap) * row,
+            width: brickWidth,
+            height: brickHeight,
             color: brickInfo.color,
             textColor: brickInfo.textColor,
             city: brickInfo.city,
-            width: brickWidth,
-            height: brickHeight,
-            hit: false,
-            type: colorCode
+            type: type
           });
         }
       }
     }
 
-    // Создание частиц при разрушении кирпича
-    function createParticles(x, y, color) {
-      for (let i = 0; i < 5; i++) {
-        particles.push({
-          x: x + scaledBrickWidth / 2,
-          y: y + scaledBrickHeight / 2,
-          size: Math.random() * 3 + 1,
-          color: color,
-          speedX: (Math.random() - 0.5) * 4,
-          speedY: (Math.random() - 0.5) * 4,
-          life: 30
-        });
+    // Сброс мяча
+    function resetBall() {
+      ball.x = paddle.x + paddle.width / 2 - ball.width / 2;
+      ball.y = paddle.y - ball.height;
+      ball.dx = 0;
+      ball.dy = 0;
+    }
+
+    // Запуск мяча
+    function launchBall() {
+      if (ball.dx === 0 && ball.dy === 0) {
+        ball.dx = ball.speed;
+        ball.dy = -ball.speed;
       }
     }
 
-    // Создание бонуса "Агентство"
-    function createBonus(x, y) {
-      bonuses.push({
-        x: x,
-        y: y,
-        width: scaledBrickWidth,
-        height: scaledBrickHeight,
-        text: "АГЕНТСТВО",
-        color: "#00FF00",
-        speed: 2
-      });
-    }
-
-    // Обновление бонусов
-    function updateBonuses() {
-      for (let i = bonuses.length - 1; i >= 0; i--) {
-        const bonus = bonuses[i];
-        bonus.y += bonus.speed;
-        
-        // Проверка столкновения с платформой
-        if (collides(bonus, paddle)) {
-          activateBonus();
-          bonuses.splice(i, 1);
-          continue;
-        }
-        
-        // Удаляем бонус, если он упал за экран
-        if (bonus.y > canvas.height) {
-          bonuses.splice(i, 1);
-        }
-      }
-    }
-
-    // Активация бонуса
-    function activateBonus() {
-      bonusActive = true;
-      bonusMultiplier = 2;
-      bonusTimeLeft = BONUS_DURATION;
-      bonusElement.textContent = "x2 ГОНОРАР!";
-      bonusElement.classList.add('bonus-active');
-    }
-
-    // Обновление таймера бонуса
-    function updateBonusTimer(deltaTime) {
+    // Обновление статистики
+    function updateStats() {
+      document.getElementById('score').textContent = score;
+      document.getElementById('level').textContent = level;
+      document.getElementById('lives').textContent = lives;
+      document.getElementById('bonus').textContent = bonusActive ? 'x2 ГОНОРАР!' : 'НЕТ';
       if (bonusActive) {
-        bonusTimeLeft -= deltaTime;
-        
-        if (bonusTimeLeft <= 0) {
-          bonusActive = false;
-          bonusMultiplier = 1;
-          bonusElement.textContent = "НЕТ";
-          bonusElement.classList.remove('bonus-active');
-        } else {
-          // Обновляем отображение оставшегося времени
-          const secondsLeft = Math.ceil(bonusTimeLeft / 1000);
-          bonusElement.textContent = `x2 (${secondsLeft}с)`;
-        }
+        document.getElementById('bonus').classList.add('bonus-active');
+      } else {
+        document.getElementById('bonus').classList.remove('bonus-active');
       }
-    }
-
-    // Обновление частиц
-    function updateParticles() {
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.speedX;
-        p.y += p.speedY;
-        p.life--;
-        
-        if (p.life <= 0) {
-          particles.splice(i, 1);
-        }
-      }
-    }
-
-    // Отрисовка частиц
-    function drawParticles() {
-      particles.forEach(p => {
-        context.globalAlpha = p.life / 30;
-        context.fillStyle = p.color;
-        context.beginPath();
-        context.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        context.fill();
-      });
-      context.globalAlpha = 1;
-    }
-
-    // Отрисовка бонусов
-    function drawBonuses() {
-      bonuses.forEach(bonus => {
-        // Рисуем бонус
-        context.fillStyle = bonus.color;
-        context.fillRect(bonus.x, bonus.y, bonus.width, bonus.height);
-        
-        // Текст на бонусе
-        context.fillStyle = '#000000';
-        context.font = `bold ${Math.max(8, Math.floor(bonus.height * 0.6))}px Arial`;
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        
-        context.fillText(
-          bonus.text, 
-          bonus.x + bonus.width / 2, 
-          bonus.y + bonus.height / 2
-        );
-      });
     }
 
     // Проверка столкновений
-    function collides(obj1, obj2) {
+    function checkCollision(obj1, obj2) {
       return obj1.x < obj2.x + obj2.width &&
              obj1.x + obj1.width > obj2.x &&
              obj1.y < obj2.y + obj2.height &&
              obj1.y + obj1.height > obj2.y;
     }
 
-    // Обновление статистики
-    function updateStats() {
-      scoreElement.textContent = score;
-      levelElement.textContent = level;
-      livesElement.textContent = lives;
-    }
-
-    // Потеря сезона
-    function loseLife() {
-      lives--;
-      updateStats();
-      
-      if (lives <= 0) {
-        gameOver();
-      } else {
-        resetBall();
-      }
-    }
-
-    // Сброс шарика
-    function resetBall() {
-      ball.x = paddle.x + paddle.width / 2 - ball.width / 2;
-      ball.y = paddle.y - ball.height;
-      ball.dx = 0;
-      ball.dy = 0;
-      ball.speedMultiplier = 1.0; // Сбрасываем множитель скорости
-    }
-
-    // Запуск игры
-    function startGame() {
-      startScreen.style.display = 'none';
-      gameRunning = true;
-      gameStarted = true;
-      
-      // Запускаем шарик с улучшенной физикой
-      ball.speedMultiplier = 1.0;
-      const angle = Math.PI / 4; // 45 градусов
-      ball.dx = Math.cos(angle) * ball.baseSpeed;
-      ball.dy = -Math.sin(angle) * ball.baseSpeed;
-    }
-
-    // Завершение уровня с благодарностью
-    function completeLevel() {
-      // Сохраняем счет за уровень перед показом благодарности
-      levelScore = score;
-      
-      // Показываем экран благодарности
-      bonusAmountElement.textContent = levelScore;
-      thanksScreen.style.display = 'block';
-      gameRunning = false;
-    }
-
-    // Переход на следующий уровень после благодарности
-    function nextLevelAfterThanks() {
-      thanksScreen.style.display = 'none';
-      level++;
-      if (level > levels.length) {
-        // Все уровни пройдены
-        level = 1;
-        score += 1000; // Бонус за прохождение всех уровней
-      }
-      
-      createLevel(levels[level - 1]);
-      resetBall();
-      gameRunning = true;
-      updateStats();
-    }
-
-    // Завершение игры
-    function gameOver() {
-      finalScoreElement.textContent = score;
-      gameOverScreen.style.display = 'block';
-      gameRunning = false;
-    }
-
-    // Перезапуск игры
-    function restartGame() {
-      score = 0;
-      level = 1;
-      lives = 3;
-      bonusActive = false;
-      bonusMultiplier = 1;
-      bonusTimeLeft = 0;
-      bonusElement.textContent = "НЕТ";
-      bonusElement.classList.remove('bonus-active');
-      createLevel(levels[level - 1]);
-      resetBall();
-      gameOverScreen.style.display = 'none';
-      gameRunning = true;
-      updateStats();
-    }
-
-    // Улучшенная функция отскока от платформы
-    function bounceFromPaddle() {
-      // Вычисляем точку удара относительно центра платформы
-      const hitPos = (ball.x + ball.width / 2 - paddle.x) / paddle.width;
-      
-      // Нормализуем от -1 до 1 (от левого края до правого)
-      const normalizedHitPos = hitPos * 2 - 1;
-      
-      // Вычисляем угол отскока на основе позиции удара
-      const bounceAngle = normalizedHitPos * ball.maxBounceAngle;
-      
-      // Устанавливаем направление и скорость
-      ball.dx = Math.sin(bounceAngle) * ball.baseSpeed * ball.speedMultiplier;
-      ball.dy = -Math.cos(bounceAngle) * ball.baseSpeed * ball.speedMultiplier;
-      
-      // Постепенно увеличиваем скорость
-      if (ball.speedMultiplier < ball.maxSpeedMultiplier) {
-        ball.speedMultiplier += 0.05;
-      }
-      
-      // Сдвигаем шарик выше платформы
-      ball.y = paddle.y - ball.height;
-    }
-
-    // Переменная для отслеживания времени
-    let lastTime = 0;
-
-    // Главный игровой цикл
-    function loop(timestamp) {
-      requestAnimationFrame(loop);
-      
-      if (!gameRunning) {
-        return;
-      }
-      
-      // Вычисляем разницу во времени
-      const deltaTime = timestamp - lastTime;
-      lastTime = timestamp;
-      
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Обновляем таймер бонуса
-      updateBonusTimer(deltaTime);
-      
-      // Движение платформы
-      paddle.x += paddle.dx;
-      
-      // Ограничения для платформы
-      if (paddle.x < scaledWallSize) {
-        paddle.x = scaledWallSize;
-      } else if (paddle.x + paddle.width > canvas.width - scaledWallSize) {
-        paddle.x = canvas.width - scaledWallSize - paddle.width;
-      }
-      
-      // Движение шарика
-      ball.x += ball.dx;
-      ball.y += ball.dy;
-      
-      // Столкновения со стенами
-      if (ball.x < scaledWallSize) {
-        ball.x = scaledWallSize;
-        ball.dx = Math.abs(ball.dx); // Гарантируем отскок вправо
-      } else if (ball.x + ball.width > canvas.width - scaledWallSize) {
-        ball.x = canvas.width - scaledWallSize - ball.width;
-        ball.dx = -Math.abs(ball.dx); // Гарантируем отскок влево
-      }
-      
-      if (ball.y < scaledWallSize) {
-        ball.y = scaledWallSize;
-        ball.dy = Math.abs(ball.dy); // Гарантируем отскок вниз
-      }
-      
-      // Потеря шарика
-      if (ball.y > canvas.height) {
-        loseLife();
-      }
-      
-      // Столкновение с платформой
-      if (collides(ball, paddle)) {
-        bounceFromPaddle();
-      }
-      
-      // Столкновения с кирпичами
-      for (let i = bricks.length - 1; i >= 0; i--) {
-        const brick = bricks[i];
-        
-        if (collides(ball, brick)) {
-          // Создаем частицы
-          createParticles(brick.x, brick.y, brick.color);
-          
-          // Случайный шанс выпадения бонуса из кирпича СПБ
-          if (brick.type === 'S' && Math.random() < 0.3) { // 30% шанс
-            createBonus(brick.x, brick.y);
-          }
-          
-          // Удаляем кирпич
-          bricks.splice(i, 1);
-          
-          // Добавляем очки с учетом бонуса
-          score += 10 * bonusMultiplier;
-          updateStats();
-          
-          // Определяем сторону столкновения
-          const ballCenterX = ball.x + ball.width / 2;
-          const ballCenterY = ball.y + ball.height / 2;
-          const brickCenterX = brick.x + brick.width / 2;
-          const brickCenterY = brick.y + brick.height / 2;
-          
-          const dx = ballCenterX - brickCenterX;
-          const dy = ballCenterY - brickCenterY;
-          const width = (ball.width + brick.width) / 2;
-          const height = (ball.height + brick.height) / 2;
-          const crossWidth = width * dy;
-          const crossHeight = height * dx;
-          
-          // Улучшенная логика отскока от кирпичей
-          if (Math.abs(dx) <= width && Math.abs(dy) <= height) {
-            if (crossWidth > crossHeight) {
-              // Столкновение сверху или снизу
-              ball.dy = -ball.dy;
-            } else {
-              // Столкновение слева или справа
-              ball.dx = -ball.dx;
-            }
-            
-            // Небольшое увеличение скорости при каждом отскоке от кирпича
-            if (ball.speedMultiplier < ball.maxSpeedMultiplier) {
-              ball.speedMultiplier += 0.02;
-              // Обновляем скорость с учетом множителя
-              const currentSpeed = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
-              const speedRatio = ball.baseSpeed * ball.speedMultiplier / currentSpeed;
-              ball.dx *= speedRatio;
-              ball.dy *= speedRatio;
-            }
-          }
-          
-          break;
-        }
-      }
-      
-      // Обновление бонусов
-      updateBonuses();
-      
-      // Проверка завершения уровня
-      if (bricks.length === 0) {
-        completeLevel();
-      }
-      
-      // Обновление частиц
-      updateParticles();
-      
-      // Отрисовка
-      
-      // Стены (золотые)
-      context.fillStyle = 'rgba(255, 215, 0, 0.3)';
-      context.fillRect(0, 0, canvas.width, scaledWallSize);
-      context.fillRect(0, 0, scaledWallSize, canvas.height);
-      context.fillRect(canvas.width - scaledWallSize, 0, scaledWallSize, canvas.height);
-      
-      // Шарик (золотой)
-      if (ball.dx || ball.dy) {
-        context.fillStyle = '#ffd700';
-        context.beginPath();
-        context.arc(ball.x + ball.width / 2, ball.y + ball.height / 2, ball.width / 2, 0, Math.PI * 2);
-        context.fill();
-        
-        // Добавляем свечение шарику
-        context.shadowColor = '#ffd700';
-        context.shadowBlur = 10;
-        context.fill();
-        context.shadowBlur = 0;
-      }
-      
-      // Кирпичи
-      bricks.forEach(brick => {
-        context.fillStyle = brick.color;
-        context.fillRect(brick.x, brick.y, brick.width, brick.height);
-        
-        // Добавляем градиент для объема
-        const gradient = context.createLinearGradient(brick.x, brick.y, brick.x, brick.y + brick.height);
-        gradient.addColorStop(0, brick.color);
-        gradient.addColorStop(1, darkenColor(brick.color, 30));
-        
-        context.fillStyle = gradient;
-        context.fillRect(brick.x, brick.y, brick.width, brick.height);
-        
-        // Обводка (золотая)
-        context.strokeStyle = 'rgba(255, 215, 0, 0.5)';
-        context.lineWidth = 1;
-        context.strokeRect(brick.x, brick.y, brick.width, brick.height);
-        
-        // Текст с названием города
-        context.fillStyle = brick.textColor;
-        context.font = `bold ${Math.max(8, Math.floor(scaledBrickHeight * 0.6))}px Arial`;
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        
-        context.fillText(
-          brick.city, 
-          brick.x + brick.width / 2, 
-          brick.y + brick.height / 2
-        );
-      });
-      
-      // Бонусы
-      drawBonuses();
-      
-      // Платформа с надписью PERVUSHIN.EVENT
-      const paddleGradient = context.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height);
-      paddleGradient.addColorStop(0, '#ffd700');
-      paddleGradient.addColorStop(1, '#b8860b');
-      
-      context.fillStyle = paddleGradient;
-      context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
-      
-      // Скругленные края платформы
-      context.fillStyle = '#b8860b';
-      context.beginPath();
-      context.arc(paddle.x, paddle.y + paddle.height / 2, paddle.height / 2, Math.PI / 2, Math.PI * 1.5);
-      context.fill();
-      
-      context.beginPath();
-      context.arc(paddle.x + paddle.width, paddle.y + paddle.height / 2, paddle.height / 2, Math.PI * 1.5, Math.PI / 2);
-      context.fill();
-      
-      // Текст на платформе
-      context.fillStyle = '#000000';
-      context.font = `bold ${Math.max(10, Math.floor(paddle.height * 0.7))}px Arial`;
-      context.textAlign = 'center';
-      context.textBaseline = 'middle';
-      
-      // Обрезаем текст, если он не помещается
-      let platformText = "PERVUSHIN.EVENT";
-      const maxWidth = paddle.width - 10;
-      let textWidth = context.measureText(platformText).width;
-      
-      // Если текст не помещается, сокращаем его
-      while (textWidth > maxWidth && platformText.length > 10) {
-        platformText = platformText.substring(0, platformText.length - 1);
-        textWidth = context.measureText(platformText).width;
-      }
-      
-      context.fillText(
-        platformText, 
-        paddle.x + paddle.width / 2, 
-        paddle.y + paddle.height / 2
-      );
-      
-      // Частицы
-      drawParticles();
-    }
-
-    // Функция для затемнения цвета
-    function darkenColor(color, percent) {
-      const num = parseInt(color.slice(1), 16);
-      const amt = Math.round(2.55 * percent);
-      const R = (num >> 16) - amt;
-      const G = (num >> 8 & 0x00FF) - amt;
-      const B = (num & 0x0000FF) - amt;
-      
-      return '#' + (
-        0x1000000 +
-        (R < 0 ? 0 : R) * 0x10000 +
-        (G < 0 ? 0 : G) * 0x100 +
-        (B < 0 ? 0 : B)
-      ).toString(16).slice(1);
-    }
-
-    // Обработчики событий для касаний на холсте
+    // Обработка касаний
     let touchX = 0;
-    let isTouching = false;
-    
+    let isDragging = false;
+
     canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
       
-      // Если игра еще не началась, запускаем ее
       if (!gameStarted) {
         startGame();
         return;
@@ -989,46 +402,247 @@
       
       const touch = e.touches[0];
       touchX = touch.clientX;
-      isTouching = true;
+      isDragging = true;
+      
+      // Запускаем мяч при первом касании после старта
+      if (ball.dx === 0 && ball.dy === 0) {
+        launchBall();
+      }
     });
-    
+
     canvas.addEventListener('touchmove', (e) => {
       e.preventDefault();
-      if (!isTouching || !gameStarted) return;
+      if (!isDragging || !gameStarted) return;
       
       const touch = e.touches[0];
       const deltaX = touch.clientX - touchX;
       
-      // Прямое управление позицией платформы
-      paddle.x += deltaX * 1.5;
+      paddle.x += deltaX * 2;
       
-      // Ограничения для платформы
-      if (paddle.x < scaledWallSize) {
-        paddle.x = scaledWallSize;
-      } else if (paddle.x + paddle.width > canvas.width - scaledWallSize) {
-        paddle.x = canvas.width - scaledWallSize - paddle.width;
+      // Границы
+      if (paddle.x < wallSize) paddle.x = wallSize;
+      if (paddle.x + paddle.width > canvas.width - wallSize) {
+        paddle.x = canvas.width - wallSize - paddle.width;
       }
       
       touchX = touch.clientX;
     });
-    
+
     canvas.addEventListener('touchend', () => {
-      isTouching = false;
-    });
-
-    // Обработчики для кнопок интерфейса
-    restartBtn.addEventListener('click', restartGame);
-    continueBtn.addEventListener('click', nextLevelAfterThanks);
-
-    // Обработчик изменения размера окна
-    window.addEventListener('resize', () => {
-      resizeCanvas();
+      isDragging = false;
     });
 
     // Запуск игры
-    resizeCanvas();
-    updateStats();
-    requestAnimationFrame(loop);
+    function startGame() {
+      startScreen.style.display = 'none';
+      gameStarted = true;
+      gameRunning = true;
+      launchBall();
+    }
+
+    // Игровой цикл
+    function gameLoop() {
+      if (!gameRunning) {
+        requestAnimationFrame(gameLoop);
+        return;
+      }
+      
+      update();
+      render();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Обновление игры
+    function update() {
+      // Движение мяча
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+      
+      // Столкновение со стенами
+      if (ball.x < wallSize || ball.x + ball.width > canvas.width - wallSize) {
+        ball.dx = -ball.dx;
+      }
+      if (ball.y < wallSize) {
+        ball.dy = -ball.dy;
+      }
+      
+      // Потеря мяча
+      if (ball.y > canvas.height) {
+        lives--;
+        updateStats();
+        if (lives <= 0) {
+          gameOver();
+        } else {
+          resetBall();
+        }
+      }
+      
+      // Столкновение с платформой
+      if (checkCollision(ball, paddle)) {
+        ball.dy = -Math.abs(ball.dy);
+        ball.y = paddle.y - ball.height;
+      }
+      
+      // Столкновение с кирпичами
+      for (let i = bricks.length - 1; i >= 0; i--) {
+        const brick = bricks[i];
+        if (checkCollision(ball, brick)) {
+          // Бонус от СПБ
+          if (brick.type === 'S' && Math.random() < 0.3) {
+            bonuses.push({
+              x: brick.x,
+              y: brick.y,
+              width: brickWidth,
+              height: brickHeight,
+              text: "АГЕНТСТВО",
+              color: "#00FF00",
+              speed: 2
+            });
+          }
+          
+          bricks.splice(i, 1);
+          score += 10 * bonusMultiplier;
+          updateStats();
+          ball.dy = -ball.dy;
+          break;
+        }
+      }
+      
+      // Обновление бонусов
+      for (let i = bonuses.length - 1; i >= 0; i--) {
+        const bonus = bonuses[i];
+        bonus.y += bonus.speed;
+        
+        if (checkCollision(bonus, paddle)) {
+          bonusActive = true;
+          bonusMultiplier = 2;
+          bonuses.splice(i, 1);
+          updateStats();
+          setTimeout(() => {
+            bonusActive = false;
+            bonusMultiplier = 1;
+            updateStats();
+          }, 10000);
+        } else if (bonus.y > canvas.height) {
+          bonuses.splice(i, 1);
+        }
+      }
+      
+      // Проверка завершения уровня
+      if (bricks.length === 0) {
+        levelComplete();
+      }
+    }
+
+    // Отрисовка
+    function render() {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Стены
+      context.fillStyle = 'rgba(255, 215, 0, 0.3)';
+      context.fillRect(0, 0, canvas.width, wallSize);
+      context.fillRect(0, 0, wallSize, canvas.height);
+      context.fillRect(canvas.width - wallSize, 0, wallSize, canvas.height);
+      
+      // Кирпичи
+      bricks.forEach(brick => {
+        context.fillStyle = brick.color;
+        context.fillRect(brick.x, brick.y, brick.width, brick.height);
+        
+        context.fillStyle = brick.textColor;
+        context.font = 'bold 10px Arial';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(brick.city, brick.x + brick.width/2, brick.y + brick.height/2);
+      });
+      
+      // Бонусы
+      bonuses.forEach(bonus => {
+        context.fillStyle = bonus.color;
+        context.fillRect(bonus.x, bonus.y, bonus.width, bonus.height);
+        
+        context.fillStyle = '#000000';
+        context.font = 'bold 8px Arial';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(bonus.text, bonus.x + bonus.width/2, bonus.y + bonus.height/2);
+      });
+      
+      // Платформа
+      context.fillStyle = '#ffd700';
+      context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+      
+      context.fillStyle = '#000000';
+      context.font = 'bold 10px Arial';
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.fillText('PERVUSHIN.EVENT', paddle.x + paddle.width/2, paddle.y + paddle.height/2);
+      
+      // Мяч
+      context.fillStyle = '#ffd700';
+      context.beginPath();
+      context.arc(ball.x + ball.width/2, ball.y + ball.height/2, ball.width/2, 0, Math.PI * 2);
+      context.fill();
+    }
+
+    // Завершение уровня
+    function levelComplete() {
+      gameRunning = false;
+      document.getElementById('bonusAmount').textContent = score;
+      thanksScreen.style.display = 'block';
+    }
+
+    // Конец игры
+    function gameOver() {
+      gameRunning = false;
+      document.getElementById('finalScore').textContent = score;
+      gameOverScreen.style.display = 'block';
+    }
+
+    // Перезапуск
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      score = 0;
+      level = 1;
+      lives = 3;
+      bonusActive = false;
+      bonusMultiplier = 1;
+      gameOverScreen.style.display = 'none';
+      createLevel();
+      resetBall();
+      updateStats();
+      gameRunning = true;
+    });
+
+    // Продолжить
+    document.getElementById('continueBtn').addEventListener('click', () => {
+      level++;
+      thanksScreen.style.display = 'none';
+      createLevel();
+      resetBall();
+      updateStats();
+      gameRunning = true;
+    });
+
+    // Изменение размера
+    function resizeCanvas() {
+      const container = canvas.parentElement;
+      const containerWidth = container.clientWidth;
+      const aspectRatio = 400 / 500;
+      
+      canvas.width = containerWidth;
+      canvas.height = containerWidth / aspectRatio;
+      
+      // Позиционируем платформу
+      paddle.y = canvas.height - 60;
+      paddle.x = (canvas.width - paddle.width) / 2;
+      
+      resetBall();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    // Запускаем игру
+    initGame();
   </script>
 </body>
 </html>
