@@ -18,9 +18,9 @@
     html, body {
       height: 100%;
       overflow: hidden;
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      background: #000000;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #fff;
+      color: #ffd700;
       touch-action: manipulation;
     }
     
@@ -30,6 +30,7 @@
       align-items: center;
       justify-content: center;
       padding: 10px;
+      background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
     }
     
     .game-container {
@@ -48,34 +49,48 @@
     .game-title {
       font-size: 1.8rem;
       margin-bottom: 8px;
-      color: #ffcc00;
-      text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+      color: #ffd700;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      font-weight: bold;
+      letter-spacing: 1px;
     }
     
     .game-stats {
       display: flex;
       justify-content: space-between;
       width: 100%;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.7);
       padding: 8px 15px;
       border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid #ffd700;
       font-size: 0.9rem;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
     }
     
     .stat-value {
-      color: #ffcc00;
+      color: #ffd700;
       font-weight: bold;
+    }
+    
+    .bonus-active {
+      color: #00ff00 !important;
+      animation: pulse 1s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
     }
     
     canvas {
       display: block;
       width: 100%;
       height: auto;
-      border: 2px solid #ffcc00;
+      border: 2px solid #ffd700;
       border-radius: 8px;
-      box-shadow: 0 0 15px rgba(255, 204, 0, 0.3);
-      background: #0f3460;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+      background: #000000;
       touch-action: none;
     }
     
@@ -91,69 +106,88 @@
       width: 70px;
       height: 70px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 215, 0, 0.1);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.8rem;
-      color: #fff;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: #ffd700;
+      border: 2px solid #ffd700;
       cursor: pointer;
       transition: all 0.1s;
       touch-action: manipulation;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
     }
     
     .touch-btn:active {
-      background: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 215, 0, 0.3);
       transform: scale(0.95);
     }
     
     .launch-btn {
       width: 80px;
       height: 80px;
-      background: rgba(255, 204, 0, 0.3);
-      border: 2px solid #ffcc00;
+      background: rgba(255, 215, 0, 0.2);
+      border: 2px solid #ffd700;
       font-size: 0.9rem;
       text-align: center;
       line-height: 1.2;
       padding-top: 10px;
     }
     
-    .game-over, .level-complete {
+    .game-over, .level-complete, .thanks-screen {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.95);
       padding: 20px;
       border-radius: 12px;
       text-align: center;
-      border: 2px solid #ffcc00;
+      border: 2px solid #ffd700;
       width: 80%;
       max-width: 300px;
       display: none;
       z-index: 10;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
     }
     
     .level-complete {
-      border-color: #00cc66;
+      border-color: #ffd700;
     }
     
-    .game-over h2, .level-complete h2 {
+    .thanks-screen {
+      border-color: #ffd700;
+    }
+    
+    .game-over h2, .level-complete h2, .thanks-screen h2 {
       margin-bottom: 15px;
       font-size: 1.5rem;
+      color: #ffd700;
     }
     
-    .game-over h2 {
-      color: #ffcc00;
+    .thanks-message {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      line-height: 1.4;
     }
     
-    .level-complete h2 {
-      color: #00cc66;
+    .bonus-earned {
+      font-size: 1.3rem;
+      color: #ffd700;
+      font-weight: bold;
+      margin: 15px 0;
+      animation: glow 2s infinite;
+    }
+    
+    @keyframes glow {
+      0% { text-shadow: 0 0 5px #ffd700; }
+      50% { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+      100% { text-shadow: 0 0 5px #ffd700; }
     }
     
     .btn {
-      background: #ffcc00;
+      background: #ffd700;
       color: #000;
       border: none;
       padding: 10px 20px;
@@ -167,7 +201,7 @@
     }
     
     .btn:active {
-      background: #ffd633;
+      background: #ffed4e;
       transform: scale(0.98);
     }
     
@@ -175,7 +209,7 @@
       text-align: center;
       margin-top: 10px;
       font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 215, 0, 0.7);
     }
     
     /* Вертикальная ориентация */
@@ -271,8 +305,9 @@
       <div class="game-stats">
         <div class="stat">ГОНОРАР: <span id="score" class="stat-value">0</span></div>
         <div class="stat">Уровень: <span id="level" class="stat-value">1</span></div>
-        <div class="stat">Жизни: <span id="lives" class="stat-value">3</span></div>
+        <div class="stat">СЕЗОН: <span id="lives" class="stat-value">3</span></div>
       </div>
+      <div class="stat">БОНУС: <span id="bonus" class="stat-value">НЕТ</span></div>
     </div>
     
     <canvas id="game"></canvas>
@@ -287,6 +322,17 @@
       <h2>УРОВЕНЬ ПРОЙДЕН!</h2>
       <p>Переходим на следующий уровень</p>
       <button class="btn" id="nextLevelBtn">Продолжить</button>
+    </div>
+    
+    <div class="thanks-screen" id="thanksScreen">
+      <h2>БЛАГОДАРНОСТЬ</h2>
+      <div class="thanks-message">
+        Евгений благодарит вас за помощь в организации мероприятия!
+      </div>
+      <div class="bonus-earned">
+        +<span id="bonusAmount">0</span> ГОНОРАРА
+      </div>
+      <button class="btn" id="continueBtn">Продолжить</button>
     </div>
   </div>
   
@@ -307,11 +353,15 @@
     const scoreElement = document.getElementById('score');
     const levelElement = document.getElementById('level');
     const livesElement = document.getElementById('lives');
+    const bonusElement = document.getElementById('bonus');
     const gameOverScreen = document.getElementById('gameOver');
     const finalScoreElement = document.getElementById('finalScore');
     const restartBtn = document.getElementById('restartBtn');
     const levelCompleteScreen = document.getElementById('levelComplete');
     const nextLevelBtn = document.getElementById('nextLevelBtn');
+    const thanksScreen = document.getElementById('thanksScreen');
+    const bonusAmountElement = document.getElementById('bonusAmount');
+    const continueBtn = document.getElementById('continueBtn');
     const leftBtn = document.querySelector('.left-btn');
     const rightBtn = document.querySelector('.right-btn');
     const launchBtn = document.querySelector('.launch-btn');
@@ -334,7 +384,7 @@
       scaleGameObjects();
     }
     
-    // Масштабирование игровых объектов
+    // Масштабирование игровых объекто
     function scaleGameObjects() {
       const scaleX = canvas.width / 400;
       const scaleY = canvas.height / 500;
@@ -366,6 +416,11 @@
     let level = 1;
     let lives = 3;
     let gameRunning = true;
+    let bonusActive = false;
+    let bonusMultiplier = 1;
+    let bonusTimeLeft = 0;
+    const BONUS_DURATION = 10000; // 10 секунд
+    let levelScore = 0; // Счет за текущий уровень
     
     // Масштабированные параметры
     let scaledBrickWidth, scaledBrickHeight, scaledBrickGap, scaledWallSize;
@@ -391,20 +446,24 @@
       ]
     ];
 
-    // Сопоставляем буквы с цветами и названиями городов
+    // Сопоставляем буквы с цветами и названиями городов (черно-золотая палитра)
     const colorMap = {
-      'M': { color: '#ff4757', city: 'МСК' },   // Красный
-      'S': { color: '#ffa502', city: 'СПБ' },   // Оранжевый
-      'N': { color: '#2ed573', city: 'НСК' },   // Зеленый
-      'A': { color: '#ffcc00', city: 'АКСУ' }    // Желтый
+      'M': { color: '#8B7500', city: 'МСК' },   // Темное золото
+      'S': { color: '#B8860B', city: 'СПБ' },   // Золото
+      'N': { color: '#DAA520', city: 'НСК' },   // Золотистый
+      'A': { color: '#FFD700', city: 'АКСУ' }   // Яркое золото
     };
 
     // Массив кирпичей
     let bricks = [];
 
+    // Массив бонусов
+    let bonuses = [];
+
     // Создаем уровень
     function createLevel(levelData) {
       bricks = [];
+      bonuses = [];
       
       // Используем масштабированные размеры
       const brickWidth = scaledBrickWidth;
@@ -428,7 +487,8 @@
             city: brickInfo.city,
             width: brickWidth,
             height: brickHeight,
-            hit: false
+            hit: false,
+            type: colorCode
           });
         }
       }
@@ -444,15 +504,19 @@
       speed: 8
     };
 
-    // Шарик
+    // Шарик с улучшенной физикой
     const ball = {
       x: 0, // Будет установлено после масштабирования
       y: 0, // Будет установлено после масштабирования
       width: 0, // Будет установлено после масштабирования
       height: 0, // Будет установлено после масштабирования
-      speed: 4,
+      baseSpeed: 5, // Увеличили базовую скорость
+      speed: 0,
       dx: 0,
-      dy: 0
+      dy: 0,
+      maxBounceAngle: Math.PI / 3, // Максимальный угол отскока (60 градусов)
+      speedMultiplier: 1.0, // Множитель скорости для постепенного ускорения
+      maxSpeedMultiplier: 2.0 // Максимальный множитель скорости
     };
 
     // Частицы для эффектов
@@ -470,6 +534,66 @@
           speedY: (Math.random() - 0.5) * 4,
           life: 30
         });
+      }
+    }
+
+    // Создание бонуса "Агентство"
+    function createBonus(x, y) {
+      bonuses.push({
+        x: x,
+        y: y,
+        width: scaledBrickWidth,
+        height: scaledBrickHeight,
+        text: "АГЕНТСТВО",
+        color: "#00FF00",
+        speed: 2
+      });
+    }
+
+    // Обновление бонусов
+    function updateBonuses() {
+      for (let i = bonuses.length - 1; i >= 0; i--) {
+        const bonus = bonuses[i];
+        bonus.y += bonus.speed;
+        
+        // Проверка столкновения с платформой
+        if (collides(bonus, paddle)) {
+          activateBonus();
+          bonuses.splice(i, 1);
+          continue;
+        }
+        
+        // Удаляем бонус, если он упал за экран
+        if (bonus.y > canvas.height) {
+          bonuses.splice(i, 1);
+        }
+      }
+    }
+
+    // Активация бонуса
+    function activateBonus() {
+      bonusActive = true;
+      bonusMultiplier = 2;
+      bonusTimeLeft = BONUS_DURATION;
+      bonusElement.textContent = "x2 ГОНОРАР!";
+      bonusElement.classList.add('bonus-active');
+    }
+
+    // Обновление таймера бонуса
+    function updateBonusTimer(deltaTime) {
+      if (bonusActive) {
+        bonusTimeLeft -= deltaTime;
+        
+        if (bonusTimeLeft <= 0) {
+          bonusActive = false;
+          bonusMultiplier = 1;
+          bonusElement.textContent = "НЕТ";
+          bonusElement.classList.remove('bonus-active');
+        } else {
+          // Обновляем отображение оставшегося времени
+          const secondsLeft = Math.ceil(bonusTimeLeft / 1000);
+          bonusElement.textContent = `x2 (${secondsLeft}с)`;
+        }
       }
     }
 
@@ -499,6 +623,27 @@
       context.globalAlpha = 1;
     }
 
+    // Отрисовка бонусов
+    function drawBonuses() {
+      bonuses.forEach(bonus => {
+        // Рисуем бонус
+        context.fillStyle = bonus.color;
+        context.fillRect(bonus.x, bonus.y, bonus.width, bonus.height);
+        
+        // Текст на бонусе
+        context.fillStyle = '#000000';
+        context.font = `bold ${Math.max(8, Math.floor(bonus.height * 0.6))}px Arial`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        
+        context.fillText(
+          bonus.text, 
+          bonus.x + bonus.width / 2, 
+          bonus.y + bonus.height / 2
+        );
+      });
+    }
+
     // Проверка столкновений
     function collides(obj1, obj2) {
       return obj1.x < obj2.x + obj2.width &&
@@ -514,7 +659,7 @@
       livesElement.textContent = lives;
     }
 
-    // Потеря жизни
+    // Потеря сезона
     function loseLife() {
       lives--;
       updateStats();
@@ -532,23 +677,23 @@
       ball.y = paddle.y - ball.height;
       ball.dx = 0;
       ball.dy = 0;
+      ball.speedMultiplier = 1.0; // Сбрасываем множитель скорости
     }
 
-    // Завершение уровня
+    // Завершение уровня с благодарностью
     function completeLevel() {
-      levelCompleteScreen.style.display = 'block';
+      // Сохраняем счет за уровень перед показом благодарности
+      levelScore = score;
+      
+      // Показываем экран благодарности
+      bonusAmountElement.textContent = levelScore;
+      thanksScreen.style.display = 'block';
       gameRunning = false;
     }
 
-    // Завершение игры
-    function gameOver() {
-      finalScoreElement.textContent = score;
-      gameOverScreen.style.display = 'block';
-      gameRunning = false;
-    }
-
-    // Начало нового уровня
-    function nextLevel() {
+    // Переход на следующий уровень после благодарности
+    function nextLevelAfterThanks() {
+      thanksScreen.style.display = 'none';
       level++;
       if (level > levels.length) {
         // Все уровни пройдены
@@ -558,9 +703,15 @@
       
       createLevel(levels[level - 1]);
       resetBall();
-      levelCompleteScreen.style.display = 'none';
       gameRunning = true;
       updateStats();
+    }
+
+    // Завершение игры
+    function gameOver() {
+      finalScoreElement.textContent = score;
+      gameOverScreen.style.display = 'block';
+      gameRunning = false;
     }
 
     // Перезапуск игры
@@ -568,6 +719,11 @@
       score = 0;
       level = 1;
       lives = 3;
+      bonusActive = false;
+      bonusMultiplier = 1;
+      bonusTimeLeft = 0;
+      bonusElement.textContent = "НЕТ";
+      bonusElement.classList.remove('bonus-active');
       createLevel(levels[level - 1]);
       resetBall();
       gameOverScreen.style.display = 'none';
@@ -575,15 +731,50 @@
       updateStats();
     }
 
+    // Улучшенная функция отскока от платформы
+    function bounceFromPaddle() {
+      // Вычисляем точку удара относительно центра платформы
+      const hitPos = (ball.x + ball.width / 2 - paddle.x) / paddle.width;
+      
+      // Нормализуем от -1 до 1 (от левого края до правого)
+      const normalizedHitPos = hitPos * 2 - 1;
+      
+      // Вычисляем угол отскока на основе позиции удара
+      const bounceAngle = normalizedHitPos * ball.maxBounceAngle;
+      
+      // Устанавливаем направление и скорость
+      ball.dx = Math.sin(bounceAngle) * ball.baseSpeed * ball.speedMultiplier;
+      ball.dy = -Math.cos(bounceAngle) * ball.baseSpeed * ball.speedMultiplier;
+      
+      // Постепенно увеличиваем скорость
+      if (ball.speedMultiplier < ball.maxSpeedMultiplier) {
+        ball.speedMultiplier += 0.05;
+      }
+      
+      // Сдвигаем шарик выше платформы
+      ball.y = paddle.y - ball.height;
+    }
+
+    // Переменная для отслеживания времени
+    let lastTime = 0;
+
     // Главный игровой цикл
-    function loop() {
+    function loop(timestamp) {
       if (!gameRunning) {
         requestAnimationFrame(loop);
         return;
       }
       
       requestAnimationFrame(loop);
+      
+      // Вычисляем разницу во времени
+      const deltaTime = timestamp - lastTime;
+      lastTime = timestamp;
+      
       context.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Обновляем таймер бонуса
+      updateBonusTimer(deltaTime);
       
       // Движение платформы
       paddle.x += paddle.dx;
@@ -602,15 +793,15 @@
       // Столкновения со стенами
       if (ball.x < scaledWallSize) {
         ball.x = scaledWallSize;
-        ball.dx *= -1;
+        ball.dx = Math.abs(ball.dx); // Гарантируем отскок вправо
       } else if (ball.x + ball.width > canvas.width - scaledWallSize) {
         ball.x = canvas.width - scaledWallSize - ball.width;
-        ball.dx *= -1;
+        ball.dx = -Math.abs(ball.dx); // Гарантируем отскок влево
       }
       
       if (ball.y < scaledWallSize) {
         ball.y = scaledWallSize;
-        ball.dy *= -1;
+        ball.dy = Math.abs(ball.dy); // Гарантируем отскок вниз
       }
       
       // Потеря шарика
@@ -620,15 +811,7 @@
       
       // Столкновение с платформой
       if (collides(ball, paddle)) {
-        // Изменяем угол отскока в зависимости от места удара
-        const hitPos = (ball.x + ball.width / 2 - paddle.x) / paddle.width;
-        const angle = hitPos * Math.PI - Math.PI / 2;
-        
-        ball.dx = ball.speed * Math.cos(angle);
-        ball.dy = -ball.speed * Math.sin(angle);
-        
-        // Сдвигаем шарик выше платформы
-        ball.y = paddle.y - ball.height;
+        bounceFromPaddle();
       }
       
       // Столкновения с кирпичами
@@ -639,11 +822,16 @@
           // Создаем частицы
           createParticles(brick.x, brick.y, brick.color);
           
+          // Случайный шанс выпадения бонуса из кирпича СПБ
+          if (brick.type === 'S' && Math.random() < 0.3) { // 30% шанс
+            createBonus(brick.x, brick.y);
+          }
+          
           // Удаляем кирпич
           bricks.splice(i, 1);
           
-          // Добавляем очки
-          score += 10;
+          // Добавляем очки с учетом бонуса
+          score += 10 * bonusMultiplier;
           updateStats();
           
           // Определяем сторону столкновения
@@ -659,17 +847,33 @@
           const crossWidth = width * dy;
           const crossHeight = height * dx;
           
+          // Улучшенная логика отскока от кирпичей
           if (Math.abs(dx) <= width && Math.abs(dy) <= height) {
             if (crossWidth > crossHeight) {
-              ball.dy *= -1;
+              // Столкновение сверху или снизу
+              ball.dy = -ball.dy;
             } else {
-              ball.dx *= -1;
+              // Столкновение слева или справа
+              ball.dx = -ball.dx;
+            }
+            
+            // Небольшое увеличение скорости при каждом отскоке от кирпича
+            if (ball.speedMultiplier < ball.maxSpeedMultiplier) {
+              ball.speedMultiplier += 0.02;
+              // Обновляем скорость с учетом множителя
+              const currentSpeed = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
+              const speedRatio = ball.baseSpeed * ball.speedMultiplier / currentSpeed;
+              ball.dx *= speedRatio;
+              ball.dy *= speedRatio;
             }
           }
           
           break;
         }
       }
+      
+      // Обновление бонусов
+      updateBonuses();
       
       // Проверка завершения уровня
       if (bricks.length === 0) {
@@ -681,21 +885,21 @@
       
       // Отрисовка
       
-      // Стены
-      context.fillStyle = 'rgba(255, 255, 255, 0.2)';
+      // Стены (золотые)
+      context.fillStyle = 'rgba(255, 215, 0, 0.3)';
       context.fillRect(0, 0, canvas.width, scaledWallSize);
       context.fillRect(0, 0, scaledWallSize, canvas.height);
       context.fillRect(canvas.width - scaledWallSize, 0, scaledWallSize, canvas.height);
       
-      // Шарик
+      // Шарик (золотой)
       if (ball.dx || ball.dy) {
-        context.fillStyle = '#ffffff';
+        context.fillStyle = '#ffd700';
         context.beginPath();
         context.arc(ball.x + ball.width / 2, ball.y + ball.height / 2, ball.width / 2, 0, Math.PI * 2);
         context.fill();
         
         // Добавляем свечение шарику
-        context.shadowColor = '#ffffff';
+        context.shadowColor = '#ffd700';
         context.shadowBlur = 10;
         context.fill();
         context.shadowBlur = 0;
@@ -714,13 +918,13 @@
         context.fillStyle = gradient;
         context.fillRect(brick.x, brick.y, brick.width, brick.height);
         
-        // Обводка
-        context.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        // Обводка (золотая)
+        context.strokeStyle = 'rgba(255, 215, 0, 0.5)';
         context.lineWidth = 1;
         context.strokeRect(brick.x, brick.y, brick.width, brick.height);
         
         // Текст с названием города
-        context.fillStyle = '#ffffff';
+        context.fillStyle = '#000000';
         context.font = `bold ${Math.max(8, Math.floor(scaledBrickHeight * 0.6))}px Arial`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
@@ -732,16 +936,19 @@
         );
       });
       
+      // Бонусы
+      drawBonuses();
+      
       // Платформа с надписью PERVUSHIN.EVENT
       const paddleGradient = context.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height);
-      paddleGradient.addColorStop(0, '#00d2ff');
-      paddleGradient.addColorStop(1, '#3a7bd5');
+      paddleGradient.addColorStop(0, '#ffd700');
+      paddleGradient.addColorStop(1, '#b8860b');
       
       context.fillStyle = paddleGradient;
       context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
       
       // Скругленные края платформы
-      context.fillStyle = '#3a7bd5';
+      context.fillStyle = '#b8860b';
       context.beginPath();
       context.arc(paddle.x, paddle.y + paddle.height / 2, paddle.height / 2, Math.PI / 2, Math.PI * 1.5);
       context.fill();
@@ -751,7 +958,7 @@
       context.fill();
       
       // Текст на платформе
-      context.fillStyle = '#ffffff';
+      context.fillStyle = '#000000';
       context.font = `bold ${Math.max(10, Math.floor(paddle.height * 0.7))}px Arial`;
       context.textAlign = 'center';
       context.textBaseline = 'middle';
@@ -812,8 +1019,11 @@
     
     launchBtn.addEventListener('touchstart', () => {
       if (ball.dx === 0 && ball.dy === 0) {
-        ball.dx = ball.speed;
-        ball.dy = -ball.speed;
+        // Запускаем шарик с улучшенной физикой
+        ball.speedMultiplier = 1.0;
+        const angle = Math.PI / 4; // 45 градусов
+        ball.dx = Math.cos(angle) * ball.baseSpeed;
+        ball.dy = -Math.sin(angle) * ball.baseSpeed;
       }
     });
 
@@ -854,7 +1064,8 @@
 
     // Обработчики для кнопок интерфейса
     restartBtn.addEventListener('click', restartGame);
-    nextLevelBtn.addEventListener('click', nextLevel);
+    nextLevelBtn.addEventListener('click', nextLevelAfterThanks);
+    continueBtn.addEventListener('click', nextLevelAfterThanks);
 
     // Обработчик изменения размера окна
     window.addEventListener('resize', () => {
