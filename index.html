@@ -94,41 +94,28 @@
       touch-action: none;
     }
     
-    .start-screen {
+    .countdown {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.8);
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 20;
       border-radius: 8px;
-    }
-    
-    .start-title {
-      font-size: 2rem;
+      font-size: 6rem;
       color: #ffd700;
-      margin-bottom: 20px;
-      text-align: center;
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+      animation: countdownPulse 1s infinite;
     }
     
-    .start-hint {
-      font-size: 1.2rem;
-      color: #ffd700;
-      text-align: center;
-      margin-top: 20px;
-      animation: blink 2s infinite;
-    }
-    
-    @keyframes blink {
-      0% { opacity: 0.5; }
-      50% { opacity: 1; }
-      100% { opacity: 0.5; }
+    @keyframes countdownPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
     }
     
     .game-over, .thanks-screen {
@@ -212,11 +199,7 @@
     
     <canvas id="game"></canvas>
     
-    <div class="start-screen" id="startScreen">
-      <h2 class="start-title">PERVUSHIN.EVENT</h2>
-      <p class="start-hint">Коснитесь экрана чтобы начать игру</p>
-      <p class="start-hint">Двигайте пальцем для управления платформой</p>
-    </div>
+    <div class="countdown" id="countdown">5</div>
     
     <div class="game-over" id="gameOver">
       <h2>ИГРА ОКОНЧЕНА</h2>
@@ -240,7 +223,7 @@
     // Инициализация элементов
     const canvas = document.getElementById('game');
     const context = canvas.getContext('2d');
-    const startScreen = document.getElementById('startScreen');
+    const countdownElement = document.getElementById('countdown');
     const gameOverScreen = document.getElementById('gameOver');
     const thanksScreen = document.getElementById('thanksScreen');
     
@@ -252,6 +235,7 @@
     let lives = 3;
     let bonusActive = false;
     let bonusMultiplier = 1;
+    let countdown = 5;
     
     // Размеры
     const brickWidth = 25;
@@ -322,8 +306,22 @@
       resetBall();
       updateStats();
       
-      // Запускаем игровой цикл
-      requestAnimationFrame(gameLoop);
+      // Запускаем отсчет
+      startCountdown();
+    }
+
+    // Обратный отсчет
+    function startCountdown() {
+      const countdownInterval = setInterval(() => {
+        countdown--;
+        countdownElement.textContent = countdown;
+        
+        if (countdown <= 0) {
+          clearInterval(countdownInterval);
+          countdownElement.style.display = 'none';
+          startGame();
+        }
+      }, 1000);
     }
 
     // Создание уровня
@@ -395,19 +393,11 @@
     canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
       
-      if (!gameStarted) {
-        startGame();
-        return;
-      }
+      if (!gameStarted) return;
       
       const touch = e.touches[0];
       touchX = touch.clientX;
       isDragging = true;
-      
-      // Запускаем мяч при первом касании после старта
-      if (ball.dx === 0 && ball.dy === 0) {
-        launchBall();
-      }
     });
 
     canvas.addEventListener('touchmove', (e) => {
@@ -434,18 +424,15 @@
 
     // Запуск игры
     function startGame() {
-      startScreen.style.display = 'none';
       gameStarted = true;
       gameRunning = true;
       launchBall();
+      gameLoop();
     }
 
     // Игровой цикл
     function gameLoop() {
-      if (!gameRunning) {
-        requestAnimationFrame(gameLoop);
-        return;
-      }
+      if (!gameRunning) return;
       
       update();
       render();
@@ -606,21 +593,27 @@
       lives = 3;
       bonusActive = false;
       bonusMultiplier = 1;
+      countdown = 5;
       gameOverScreen.style.display = 'none';
+      countdownElement.style.display = 'flex';
+      countdownElement.textContent = countdown;
       createLevel();
       resetBall();
       updateStats();
-      gameRunning = true;
+      startCountdown();
     });
 
     // Продолжить
     document.getElementById('continueBtn').addEventListener('click', () => {
       level++;
       thanksScreen.style.display = 'none';
+      countdown = 5;
+      countdownElement.style.display = 'flex';
+      countdownElement.textContent = countdown;
       createLevel();
       resetBall();
       updateStats();
-      gameRunning = true;
+      startCountdown();
     });
 
     // Изменение размера
