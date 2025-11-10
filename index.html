@@ -243,29 +243,22 @@
     const brickHeight = 12;
     const brickGap = 2;
     const wallSize = 12;
+    const bricksPerRow = 13;
+    const totalRows = 16;
     
     // Уровни
     const levels = [
-      [
-        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
-        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
-        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
-        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
-        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
-        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
-        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
-        ['M','M','M','M','M','M','M','M','M','M','M','M','M','M'],
-        ['S','S','S','S','S','S','S','S','S','S','S','S','S','S'],
-        ['S','S','S','S','S','S','S','S','S','S','S','S','S','S'],
-        ['N','N','N','N','N','N','N','N','N','N','N','N','N','N'],
-        ['N','N','N','N','N','N','N','N','N','N','N','N','N','N'],
-        ['P','P','P','P','P','P','P','P','P','P','P','P','P','P'],
-        ['P','P','P','P','P','P','P','P','P','P','P','P','P','P'],
-        ['P','P','P','P','P','P','P','P','P','P','P','P','P','P'],
-        ['A','A','A','A','A','A','A','A','A','A','A','A','A','A'],
-        ['A','A','A','A','A','A','A','A','A','A','A','A','A','A'],
-        ['A','A','A','A','A','A','A','A','A','A','A','A','A','A']
-      ]
+      // Уровень 1: 13x16 = 208 кирпичей
+      Array(totalRows).fill().map((_, rowIndex) => 
+        Array(bricksPerRow).fill().map((_, colIndex) => {
+          // Распределение типов кирпичей по рядам
+          if (rowIndex < 4) return 'M'; // МСК - 4 ряда
+          if (rowIndex < 6) return 'S'; // СПБ - 2 ряда
+          if (rowIndex < 8) return 'N'; // НСК - 2 ряда
+          if (rowIndex < 11) return 'P'; // ПВЛ - 3 ряда
+          return 'A'; // АКСУ - 5 рядов
+        })
+      )
     ];
 
     // Цвета кирпичей
@@ -285,7 +278,7 @@
     const paddle = {
       x: 0,
       y: 0,
-      width: 70,
+      width: 80,
       height: 12,
       speed: 8
     };
@@ -299,6 +292,14 @@
       dy: 0,
       speed: 5
     };
+
+    // Функция вибрации
+    function vibrate() {
+      if (navigator.vibrate) {
+        // Вибрация при столкновении с кирпичом
+        navigator.vibrate(50);
+      }
+    }
 
     // Инициализация игры
     function initGame() {
@@ -353,7 +354,7 @@
     // Сброс мяча
     function resetBall() {
       ball.x = paddle.x + paddle.width / 2 - ball.width / 2;
-      ball.y = paddle.y - ball.height - 5; // Немного выше платформы
+      ball.y = paddle.y - ball.height - 5;
       ball.dx = 0;
       ball.dy = 0;
       ballLost = false;
@@ -528,6 +529,9 @@
       for (let i = bricks.length - 1; i >= 0; i--) {
         const brick = bricks[i];
         if (checkCollision(ball, brick)) {
+          // ВИБРАЦИЯ при столкновении с кирпичом
+          vibrate();
+          
           // Бонус от СПБ
           if (brick.type === 'S' && Math.random() < 0.3) {
             bonuses.push({
@@ -613,7 +617,7 @@
         context.fillRect(brick.x, brick.y, brick.width, brick.height);
         
         context.fillStyle = brick.textColor;
-        context.font = 'bold 10px Arial';
+        context.font = 'bold 8px Arial';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
         context.fillText(brick.city, brick.x + brick.width/2, brick.y + brick.height/2);
@@ -625,13 +629,13 @@
         context.fillRect(bonus.x, bonus.y, bonus.width, bonus.height);
         
         context.fillStyle = '#000000';
-        context.font = 'bold 8px Arial';
+        context.font = 'bold 7px Arial';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
         context.fillText(bonus.text, bonus.x + bonus.width/2, bonus.y + bonus.height/2);
       });
       
-      // Платформа
+      // Платформа с надписью PERVUSHIN
       context.fillStyle = '#ffd700';
       context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
       
@@ -639,7 +643,7 @@
       context.font = 'bold 10px Arial';
       context.textAlign = 'center';
       context.textBaseline = 'middle';
-      context.fillText('PERVUSHIN.EVENT', paddle.x + paddle.width/2, paddle.y + paddle.height/2);
+      context.fillText('PERVUSHIN', paddle.x + paddle.width/2, paddle.y + paddle.height/2);
       
       // Мяч
       context.fillStyle = '#ffd700';
@@ -701,8 +705,8 @@
       canvas.width = containerWidth;
       canvas.height = containerWidth / aspectRatio;
       
-      // Позиционируем платформу НИЖЕ (ближе к низу экрана)
-      paddle.y = canvas.height - 30; // Было 60, стало 30
+      // Позиционируем платформу НИЖЕ
+      paddle.y = canvas.height - 30;
       paddle.x = (canvas.width - paddle.width) / 2;
       
       resetBall();
