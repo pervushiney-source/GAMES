@@ -246,6 +246,15 @@
     const bricksPerRow = 13;
     const totalRows = 16;
     
+    // НОВАЯ ШКАЛА ГОНОРАРОВ
+    const brickRewards = {
+      'A': 10000,  // АКСУ
+      'P': 50000,  // ПВЛ
+      'N': 80000,  // НСК
+      'S': 100000, // СПБ
+      'M': 150000  // МСК
+    };
+    
     // Уровни
     const levels = [
       // Уровень 1: 13x16 = 208 кирпичей
@@ -264,8 +273,8 @@
     // Цвета кирпичей
     const brickColors = {
       'M': { color: '#FFFFFF', textColor: '#000000', city: 'МСК' },
-      'S': { color: '#0000FF', textColor: '#000000', city: 'СПБ' },
-      'N': { color: '#FF0000', textColor: '#000000', city: 'НСК' },
+      'S': { color: '#0000FF', textColor: '#FFFFFF', city: 'СПБ' },
+      'N': { color: '#FF0000', textColor: '#FFFFFF', city: 'НСК' },
       'P': { color: '#0000FF', textColor: '#FFD700', city: 'ПВЛ' },
       'A': { color: '#0000FF', textColor: '#FFD700', city: 'АКСУ' }
     };
@@ -345,7 +354,8 @@
             color: brickInfo.color,
             textColor: brickInfo.textColor,
             city: brickInfo.city,
-            type: type
+            type: type,
+            reward: brickRewards[type] // Добавляем награду за кирпич
           });
         }
       }
@@ -375,7 +385,7 @@
 
     // Обновление статистики
     function updateStats() {
-      document.getElementById('score').textContent = score;
+      document.getElementById('score').textContent = score.toLocaleString();
       document.getElementById('level').textContent = level;
       document.getElementById('lives').textContent = lives;
       document.getElementById('bonus').textContent = bonusActive ? 'x2 ГОНОРАР!' : 'НЕТ';
@@ -568,8 +578,14 @@
             }
           }
           
+          // НОВАЯ СИСТЕМА НАЧИСЛЕНИЯ ГОНОРАРА
+          const reward = brick.reward * bonusMultiplier;
+          score += reward;
+          
+          // Создаем эффект текста с наградой
+          createRewardText(brick.x + brick.width/2, brick.y + brick.height/2, reward);
+          
           bricks.splice(i, 1);
-          score += 10 * bonusMultiplier;
           updateStats();
           break;
         }
@@ -595,9 +611,38 @@
         }
       }
       
+      // Обновление эффектов текста
+      updateRewardTexts();
+      
       // Проверка завершения уровня
       if (bricks.length === 0) {
         levelComplete();
+      }
+    }
+
+    // Эффекты текста с наградами
+    let rewardTexts = [];
+    
+    function createRewardText(x, y, amount) {
+      rewardTexts.push({
+        x: x,
+        y: y,
+        text: '+' + amount.toLocaleString(),
+        alpha: 1,
+        life: 60
+      });
+    }
+    
+    function updateRewardTexts() {
+      for (let i = rewardTexts.length - 1; i >= 0; i--) {
+        const text = rewardTexts[i];
+        text.y -= 1;
+        text.alpha -= 1 / text.life;
+        text.life--;
+        
+        if (text.life <= 0) {
+          rewardTexts.splice(i, 1);
+        }
       }
     }
 
@@ -635,6 +680,15 @@
         context.fillText(bonus.text, bonus.x + bonus.width/2, bonus.y + bonus.height/2);
       });
       
+      // Эффекты текста с наградами
+      rewardTexts.forEach(text => {
+        context.fillStyle = `rgba(255, 215, 0, ${text.alpha})`;
+        context.font = 'bold 12px Arial';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(text.text, text.x, text.y);
+      });
+      
       // Платформа с надписью PERVUSHIN
       context.fillStyle = '#ffd700';
       context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
@@ -655,14 +709,14 @@
     // Завершение уровня
     function levelComplete() {
       gameRunning = false;
-      document.getElementById('bonusAmount').textContent = score;
+      document.getElementById('bonusAmount').textContent = score.toLocaleString();
       thanksScreen.style.display = 'block';
     }
 
     // Конец игры
     function gameOver() {
       gameRunning = false;
-      document.getElementById('finalScore').textContent = score;
+      document.getElementById('finalScore').textContent = score.toLocaleString();
       gameOverScreen.style.display = 'block';
     }
 
