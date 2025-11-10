@@ -94,45 +94,41 @@
       touch-action: none;
     }
     
-    .touch-controls {
-      display: flex;
-      justify-content: space-between;
+    .start-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      margin-top: 15px;
-      padding: 0 10px;
-    }
-    
-    .touch-btn {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background: rgba(255, 215, 0, 0.1);
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
-      font-size: 1.8rem;
+      align-items: center;
+      z-index: 20;
+      border-radius: 8px;
+    }
+    
+    .start-title {
+      font-size: 2rem;
       color: #ffd700;
-      border: 2px solid #ffd700;
-      cursor: pointer;
-      transition: all 0.1s;
-      touch-action: manipulation;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-    }
-    
-    .touch-btn:active {
-      background: rgba(255, 215, 0, 0.3);
-      transform: scale(0.95);
-    }
-    
-    .launch-btn {
-      width: 80px;
-      height: 80px;
-      background: rgba(255, 215, 0, 0.2);
-      border: 2px solid #ffd700;
-      font-size: 0.9rem;
+      margin-bottom: 20px;
       text-align: center;
-      line-height: 1.2;
-      padding-top: 10px;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+    
+    .start-hint {
+      font-size: 1.2rem;
+      color: #ffd700;
+      text-align: center;
+      margin-top: 20px;
+      animation: blink 2s infinite;
+    }
+    
+    @keyframes blink {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
     }
     
     .game-over, .level-complete, .thanks-screen {
@@ -223,16 +219,12 @@
         font-size: 0.8rem;
       }
       
-      .touch-btn {
-        width: 60px;
-        height: 60px;
+      .start-title {
         font-size: 1.5rem;
       }
       
-      .launch-btn {
-        width: 70px;
-        height: 70px;
-        font-size: 0.8rem;
+      .start-hint {
+        font-size: 1rem;
       }
     }
     
@@ -251,26 +243,6 @@
       .game-header {
         margin-bottom: 5px;
       }
-      
-      .touch-controls {
-        flex-direction: column;
-        width: auto;
-        margin-top: 0;
-        margin-left: 10px;
-      }
-      
-      .touch-btn {
-        width: 60px;
-        height: 60px;
-        margin-bottom: 10px;
-      }
-      
-      .launch-btn {
-        width: 60px;
-        height: 60px;
-        font-size: 0.7rem;
-        padding-top: 5px;
-      }
     }
     
     /* Очень маленькие экраны */
@@ -284,16 +256,12 @@
         padding: 4px 8px;
       }
       
-      .touch-btn {
-        width: 50px;
-        height: 50px;
+      .start-title {
         font-size: 1.3rem;
       }
       
-      .launch-btn {
-        width: 60px;
-        height: 60px;
-        font-size: 0.7rem;
+      .start-hint {
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -312,16 +280,16 @@
     
     <canvas id="game"></canvas>
     
+    <div class="start-screen" id="startScreen">
+      <h2 class="start-title">PERVUSHIN.EVENT</h2>
+      <p class="start-hint">Коснитесь экрана чтобы начать игру</p>
+      <p class="start-hint">Двигайте пальцем для управления платформой</p>
+    </div>
+    
     <div class="game-over" id="gameOver">
       <h2>ИГРА ОКОНЧЕНА</h2>
       <p>Ваш ГОНОРАР: <span id="finalScore">0</span></p>
       <button class="btn" id="restartBtn">Играть снова</button>
-    </div>
-    
-    <div class="level-complete" id="levelComplete">
-      <h2>УРОВЕНЬ ПРОЙДЕН!</h2>
-      <p>Переходим на следующий уровень</p>
-      <button class="btn" id="nextLevelBtn">Продолжить</button>
     </div>
     
     <div class="thanks-screen" id="thanksScreen">
@@ -335,16 +303,6 @@
       <button class="btn" id="continueBtn">Продолжить</button>
     </div>
   </div>
-  
-  <div class="touch-controls">
-    <div class="touch-btn left-btn">←</div>
-    <div class="touch-btn launch-btn">ЗАПУСК</div>
-    <div class="touch-btn right-btn">→</div>
-  </div>
-  
-  <div class="mobile-hint">
-    Касайтесь экрана для управления платформой
-  </div>
 
   <script>
     // Получаем элементы DOM
@@ -357,14 +315,10 @@
     const gameOverScreen = document.getElementById('gameOver');
     const finalScoreElement = document.getElementById('finalScore');
     const restartBtn = document.getElementById('restartBtn');
-    const levelCompleteScreen = document.getElementById('levelComplete');
-    const nextLevelBtn = document.getElementById('nextLevelBtn');
     const thanksScreen = document.getElementById('thanksScreen');
     const bonusAmountElement = document.getElementById('bonusAmount');
     const continueBtn = document.getElementById('continueBtn');
-    const leftBtn = document.querySelector('.left-btn');
-    const rightBtn = document.querySelector('.right-btn');
-    const launchBtn = document.querySelector('.launch-btn');
+    const startScreen = document.getElementById('startScreen');
 
     // Адаптивный размер холста
     function resizeCanvas() {
@@ -415,7 +369,8 @@
     let score = 0;
     let level = 1;
     let lives = 3;
-    let gameRunning = true;
+    let gameRunning = false;
+    let gameStarted = false;
     let bonusActive = false;
     let bonusMultiplier = 1;
     let bonusTimeLeft = 0;
@@ -441,17 +396,22 @@
         ['S','S','S','S','S','S','S','S','S','S','S','S','S','S'],
         ['N','N','N','N','N','N','N','N','N','N','N','N','N','N'],
         ['N','N','N','N','N','N','N','N','N','N','N','N','N','N'],
+        ['P','P','P','P','P','P','P','P','P','P','P','P','P','P'],
+        ['P','P','P','P','P','P','P','P','P','P','P','P','P','P'],
+        ['P','P','P','P','P','P','P','P','P','P','P','P','P','P'],
+        ['A','A','A','A','A','A','A','A','A','A','A','A','A','A'],
         ['A','A','A','A','A','A','A','A','A','A','A','A','A','A'],
         ['A','A','A','A','A','A','A','A','A','A','A','A','A','A']
       ]
     ];
 
-    // Сопоставляем буквы с цветами и названиями городов (черно-золотая палитра)
+    // Сопоставляем буквы с цветами и названиями городов
     const colorMap = {
-      'M': { color: '#8B7500', city: 'МСК' },   // Темное золото
-      'S': { color: '#B8860B', city: 'СПБ' },   // Золото
-      'N': { color: '#DAA520', city: 'НСК' },   // Золотистый
-      'A': { color: '#FFD700', city: 'АКСУ' }   // Яркое золото
+      'M': { color: '#FFFFFF', textColor: '#000000', city: 'МСК' },   // Белый с черным текстом
+      'S': { color: '#0000FF', textColor: '#000000', city: 'СПБ' },   // Синий с черным текстом
+      'N': { color: '#FF0000', textColor: '#000000', city: 'НСК' },   // Красный с черным текстом
+      'P': { color: '#0000FF', textColor: '#FFD700', city: 'ПВЛ' },   // Синий с золотым текстом
+      'A': { color: '#0000FF', textColor: '#FFD700', city: 'АКСУ' }   // Синий с золотым текстом
     };
 
     // Массив кирпичей
@@ -484,6 +444,7 @@
             x: wallSize + (brickWidth + brickGap) * col,
             y: wallSize + (brickHeight + brickGap) * row,
             color: brickInfo.color,
+            textColor: brickInfo.textColor,
             city: brickInfo.city,
             width: brickWidth,
             height: brickHeight,
@@ -678,6 +639,19 @@
       ball.dx = 0;
       ball.dy = 0;
       ball.speedMultiplier = 1.0; // Сбрасываем множитель скорости
+    }
+
+    // Запуск игры
+    function startGame() {
+      startScreen.style.display = 'none';
+      gameRunning = true;
+      gameStarted = true;
+      
+      // Запускаем шарик с улучшенной физикой
+      ball.speedMultiplier = 1.0;
+      const angle = Math.PI / 4; // 45 градусов
+      ball.dx = Math.cos(angle) * ball.baseSpeed;
+      ball.dy = -Math.sin(angle) * ball.baseSpeed;
     }
 
     // Завершение уровня с благодарностью
@@ -924,7 +898,7 @@
         context.strokeRect(brick.x, brick.y, brick.width, brick.height);
         
         // Текст с названием города
-        context.fillStyle = '#000000';
+        context.fillStyle = brick.textColor;
         context.font = `bold ${Math.max(8, Math.floor(scaledBrickHeight * 0.6))}px Arial`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
@@ -1000,39 +974,19 @@
       ).toString(16).slice(1);
     }
 
-    // Обработчики событий для кнопок
-    leftBtn.addEventListener('touchstart', () => {
-      paddle.dx = -paddle.speed;
-    });
-    
-    leftBtn.addEventListener('touchend', () => {
-      paddle.dx = 0;
-    });
-    
-    rightBtn.addEventListener('touchstart', () => {
-      paddle.dx = paddle.speed;
-    });
-    
-    rightBtn.addEventListener('touchend', () => {
-      paddle.dx = 0;
-    });
-    
-    launchBtn.addEventListener('touchstart', () => {
-      if (ball.dx === 0 && ball.dy === 0) {
-        // Запускаем шарик с улучшенной физикой
-        ball.speedMultiplier = 1.0;
-        const angle = Math.PI / 4; // 45 градусов
-        ball.dx = Math.cos(angle) * ball.baseSpeed;
-        ball.dy = -Math.sin(angle) * ball.baseSpeed;
-      }
-    });
-
-    // Обработчики событий для касаний на холсте (альтернативное управление)
+    // Обработчики событий для касаний на холсте
     let touchX = 0;
     let isTouching = false;
     
     canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
+      
+      // Если игра еще не началась, запускаем ее
+      if (!gameStarted) {
+        startGame();
+        return;
+      }
+      
       const touch = e.touches[0];
       touchX = touch.clientX;
       isTouching = true;
@@ -1040,7 +994,7 @@
     
     canvas.addEventListener('touchmove', (e) => {
       e.preventDefault();
-      if (!isTouching) return;
+      if (!isTouching || !gameStarted) return;
       
       const touch = e.touches[0];
       const deltaX = touch.clientX - touchX;
@@ -1064,7 +1018,6 @@
 
     // Обработчики для кнопок интерфейса
     restartBtn.addEventListener('click', restartGame);
-    nextLevelBtn.addEventListener('click', nextLevelAfterThanks);
     continueBtn.addEventListener('click', nextLevelAfterThanks);
 
     // Обработчик изменения размера окна
