@@ -320,51 +320,6 @@
     const continueBtn = document.getElementById('continueBtn');
     const startScreen = document.getElementById('startScreen');
 
-    // Адаптивный размер холста
-    function resizeCanvas() {
-      const container = canvas.parentElement;
-      const containerWidth = container.clientWidth;
-      
-      // Сохраняем соотношение сторон оригинального холста (400x500)
-      const aspectRatio = 400 / 500;
-      const newWidth = containerWidth;
-      const newHeight = containerWidth / aspectRatio;
-      
-      // Устанавливаем новые размеры
-      canvas.width = newWidth;
-      canvas.height = newHeight;
-      
-      // Масштабируем игровые объекты
-      scaleGameObjects();
-    }
-    
-    // Масштабирование игровых объекто
-    function scaleGameObjects() {
-      const scaleX = canvas.width / 400;
-      const scaleY = canvas.height / 500;
-      
-      // Масштабируем параметры кирпичей
-      scaledBrickWidth = Math.floor(25 * scaleX);
-      scaledBrickHeight = Math.floor(12 * scaleY);
-      scaledBrickGap = Math.floor(2 * scaleX);
-      scaledWallSize = Math.floor(12 * scaleX);
-      
-      // Масштабируем платформу
-      paddle.width = Math.floor(70 * scaleX);
-      paddle.height = Math.floor(12 * scaleY);
-      paddle.y = canvas.height - 60 * scaleY;
-      
-      // Масштабируем шарик
-      ball.width = Math.floor(8 * scaleX);
-      ball.height = Math.floor(8 * scaleY);
-      
-      // Пересоздаем уровень с новыми размерами
-      createLevel(levels[level - 1]);
-      
-      // Сбрасываем позицию шарика
-      resetBall();
-    }
-
     // Игровые переменные
     let score = 0;
     let level = 1;
@@ -420,6 +375,80 @@
     // Массив бонусов
     let bonuses = [];
 
+    // Платформа игрока
+    const paddle = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      dx: 0,
+      speed: 8
+    };
+
+    // Шарик с улучшенной физикой
+    const ball = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      baseSpeed: 5,
+      speed: 0,
+      dx: 0,
+      dy: 0,
+      maxBounceAngle: Math.PI / 3,
+      speedMultiplier: 1.0,
+      maxSpeedMultiplier: 2.0
+    };
+
+    // Частицы для эффектов
+    let particles = [];
+
+    // Адаптивный размер холста
+    function resizeCanvas() {
+      const container = canvas.parentElement;
+      const containerWidth = container.clientWidth;
+      
+      // Сохраняем соотношение сторон оригинального холста (400x500)
+      const aspectRatio = 400 / 500;
+      const newWidth = containerWidth;
+      const newHeight = containerWidth / aspectRatio;
+      
+      // Устанавливаем новые размеры
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+      
+      // Масштабируем игровые объекты
+      scaleGameObjects();
+    }
+    
+    // Масштабирование игровых объекто
+    function scaleGameObjects() {
+      const scaleX = canvas.width / 400;
+      const scaleY = canvas.height / 500;
+      
+      // Масштабируем параметры кирпичей
+      scaledBrickWidth = Math.floor(25 * scaleX);
+      scaledBrickHeight = Math.floor(12 * scaleY);
+      scaledBrickGap = Math.floor(2 * scaleX);
+      scaledWallSize = Math.floor(12 * scaleX);
+      
+      // Масштабируем платформу
+      paddle.width = Math.floor(70 * scaleX);
+      paddle.height = Math.floor(12 * scaleY);
+      paddle.y = canvas.height - 60 * scaleY;
+      paddle.x = (canvas.width - paddle.width) / 2;
+      
+      // Масштабируем шарик
+      ball.width = Math.floor(8 * scaleX);
+      ball.height = Math.floor(8 * scaleY);
+      
+      // Пересоздаем уровень с новыми размерами
+      createLevel(levels[level - 1]);
+      
+      // Сбрасываем позицию шарика
+      resetBall();
+    }
+
     // Создаем уровень
     function createLevel(levelData) {
       bricks = [];
@@ -454,34 +483,6 @@
         }
       }
     }
-
-    // Платформа игрока
-    const paddle = {
-      x: 0, // Будет установлено после масштабирования
-      y: 0, // Будет установлено после масштабирования
-      width: 0, // Будет установлено после масштабирования
-      height: 0, // Будет установлено после масштабирования
-      dx: 0,
-      speed: 8
-    };
-
-    // Шарик с улучшенной физикой
-    const ball = {
-      x: 0, // Будет установлено после масштабирования
-      y: 0, // Будет установлено после масштабирования
-      width: 0, // Будет установлено после масштабирования
-      height: 0, // Будет установлено после масштабирования
-      baseSpeed: 5, // Увеличили базовую скорость
-      speed: 0,
-      dx: 0,
-      dy: 0,
-      maxBounceAngle: Math.PI / 3, // Максимальный угол отскока (60 градусов)
-      speedMultiplier: 1.0, // Множитель скорости для постепенного ускорения
-      maxSpeedMultiplier: 2.0 // Максимальный множитель скорости
-    };
-
-    // Частицы для эффектов
-    let particles = [];
 
     // Создание частиц при разрушении кирпича
     function createParticles(x, y, color) {
@@ -734,12 +735,11 @@
 
     // Главный игровой цикл
     function loop(timestamp) {
+      requestAnimationFrame(loop);
+      
       if (!gameRunning) {
-        requestAnimationFrame(loop);
         return;
       }
-      
-      requestAnimationFrame(loop);
       
       // Вычисляем разницу во времени
       const deltaTime = timestamp - lastTime;
