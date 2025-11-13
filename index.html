@@ -118,41 +118,51 @@
       100% { transform: scale(1); }
     }
     
-    .game-over, .thanks-screen {
+    .game-over, .thanks-screen, .level-complete, .final-screen {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       background: rgba(0, 0, 0, 0.95);
-      padding: 20px;
-      border-radius: 12px;
+      padding: 25px;
+      border-radius: 15px;
       text-align: center;
       border: 2px solid #ffd700;
-      width: 80%;
-      max-width: 300px;
+      width: 85%;
+      max-width: 320px;
       display: none;
       z-index: 10;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
     }
     
-    .thanks-screen {
+    .thanks-screen, .level-complete, .final-screen {
       border-color: #ffd700;
     }
     
-    .game-over h2, .thanks-screen h2 {
+    .game-over h2, .thanks-screen h2, .level-complete h2, .final-screen h2 {
       margin-bottom: 15px;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       color: #ffd700;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
     }
     
     .thanks-message {
       font-size: 1.1rem;
       margin-bottom: 15px;
       line-height: 1.4;
+      color: #ffffff;
+    }
+    
+    .final-message {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      line-height: 1.5;
+      color: #ffd700;
+      font-weight: bold;
     }
     
     .bonus-earned {
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       color: #ffd700;
       font-weight: bold;
       margin: 15px 0;
@@ -169,19 +179,191 @@
       background: #ffd700;
       color: #000;
       border: none;
-      padding: 10px 20px;
-      font-size: 1rem;
-      border-radius: 5px;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      border-radius: 8px;
       cursor: pointer;
       margin-top: 10px;
       font-weight: bold;
       width: 100%;
       transition: all 0.3s;
+      box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+    }
+    
+    .btn:hover {
+      background: #ffed4e;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(255, 215, 0, 0.4);
     }
     
     .btn:active {
       background: #ffed4e;
       transform: scale(0.98);
+    }
+    
+    .whatsapp-btn {
+      background: #25D366;
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      font-size: 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-weight: bold;
+      width: 100%;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 8px rgba(37, 211, 102, 0.3);
+    }
+    
+    .whatsapp-btn:hover {
+      background: #20b858;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(37, 211, 102, 0.4);
+    }
+    
+    .whatsapp-btn:active {
+      background: #1ca64d;
+      transform: scale(0.98);
+    }
+    
+    .controls-info {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: #aaa;
+      text-align: center;
+    }
+    
+    .keyboard-controls {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .key {
+      background: rgba(255, 215, 0, 0.2);
+      border: 1px solid #ffd700;
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      color: #ffd700;
+    }
+    
+    .bonus-text {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      font-weight: bold;
+      text-align: center;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+      z-index: 5;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s;
+    }
+    
+    .december-text {
+      color: #00FFFF;
+      text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+    }
+    
+    .agency-text {
+      color: #00FF00;
+      text-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
+    }
+    
+    .duet-text {
+      color: #FF69B4;
+      text-shadow: 0 0 15px rgba(255, 105, 180, 0.8);
+    }
+    
+    .extend-text {
+      color: #FFA500;
+      text-shadow: 0 0 15px rgba(255, 165, 0, 0.8);
+    }
+    
+    .laser-text {
+      color: #FF0000;
+      text-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+    }
+    
+    .catch-text {
+      color: #00CED1;
+      text-shadow: 0 0 15px rgba(0, 206, 209, 0.8);
+    }
+    
+    .slow-text {
+      color: #9370DB;
+      text-shadow: 0 0 15px rgba(147, 112, 219, 0.8);
+    }
+    
+    .disruption-text {
+      color: #1E90FF;
+      text-shadow: 0 0 15px rgba(30, 144, 255, 0.8);
+    }
+    
+    .player-text {
+      color: #C0C0C0;
+      text-shadow: 0 0 15px rgba(192, 192, 192, 0.8);
+    }
+    
+    .combo-text {
+      color: #FF4500;
+      text-shadow: 0 0 15px rgba(255, 69, 0, 0.8);
+      font-size: 2.5rem;
+    }
+    
+    .snowflake {
+      position: absolute;
+      color: #ffffff;
+      font-size: 20px;
+      pointer-events: none;
+      z-index: 5;
+    }
+    
+    .combo-effect {
+      position: absolute;
+      color: #FFD700;
+      font-size: 24px;
+      font-weight: bold;
+      z-index: 6;
+      pointer-events: none;
+      animation: comboFloat 2s ease-out forwards;
+    }
+    
+    @keyframes comboFloat {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100px) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    .final-score {
+      font-size: 2rem;
+      color: #ffd700;
+      font-weight: bold;
+      margin: 15px 0;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+
+    .congratulations {
+      font-size: 1.3rem;
+      color: #00ff00;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
     }
   </style>
 </head>
@@ -201,6 +383,17 @@
     
     <div class="countdown" id="countdown">5</div>
     
+    <div class="bonus-text december-text" id="decemberText">ДЕКАБРЬ - МЕСЯЦ ВОЗМОЖНОСТЕЙ</div>
+    <div class="bonus-text agency-text" id="agencyText">ВЫ ТЕПЕРЬ РАБОТАЕТЕ С АГЕНТСТВОМ</div>
+    <div class="bonus-text duet-text" id="duetText">ВЫ РАБОТАЕТЕ В ДУЭТЕ</div>
+    <div class="bonus-text extend-text" id="extendText">ВЫ ХОРОШО ВЫСПАЛИСЬ И ГОТОВЫ РАБОТАТЬ ЛУЧШЕ</div>
+    <div class="bonus-text laser-text" id="laserText">ЛАЗЕРНАЯ ПУШКА АКТИВИРОВАНА!</div>
+    <div class="bonus-text catch-text" id="catchText">МАГНИТ АКТИВИРОВАН!</div>
+    <div class="bonus-text slow-text" id="slowText">ЗАМЕДЛЕНИЕ АКТИВИРОВАНО!</div>
+    <div class="bonus-text disruption-text" id="disruptionText">РАЗДЕЛЕНИЕ ШАРА!</div>
+    <div class="bonus-text player-text" id="playerText">+2 ЖИЗНИ!</div>
+    <div class="bonus-text combo-text" id="comboText">КОМБО! x5</div>
+    
     <div class="game-over" id="gameOver">
       <h2>ИГРА ОКОНЧЕНА</h2>
       <p>Ваш ГОНОРАР: <span id="finalScore">0</span></p>
@@ -217,6 +410,42 @@
       </div>
       <button class="btn" id="continueBtn">Продолжить</button>
     </div>
+    
+    <div class="level-complete" id="levelComplete">
+      <h2>УРОВЕНЬ ПРОЙДЕН!</h2>
+      <p>Вы заработали: <span id="levelScore">0</span> ГОНОРАРА</p>
+      <button class="btn" id="nextLevelBtn">Следующий уровень</button>
+    </div>
+    
+    <div class="final-screen" id="finalScreen">
+      <h2>🎉 ПОЗДРАВЛЯЮ! 🎉</h2>
+      <div class="congratulations">Вы прошли все уровни!</div>
+      <div class="final-message">
+        Спасибо за помощь в организации мероприятий! Ваш вклад неоценим!
+      </div>
+      <div class="final-score">
+        ГОНОРАР: <span id="totalScore">0</span>
+      </div>
+      <div class="thanks-message">
+        Хотите обсудить сотрудничество?
+      </div>
+      <button class="whatsapp-btn" id="whatsappBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893-.001-3.189-1.262-6.187-3.55-8.444"/>
+        </svg>
+        Написать в WhatsApp
+      </button>
+      <button class="btn" id="finalRestartBtn">Играть ещё раз</button>
+    </div>
+  </div>
+
+  <div class="controls-info">
+    Используйте касания или стрелки ← → для управления платформой
+  </div>
+  
+  <div class="keyboard-controls">
+    <div class="key">← ЛЕВО</div>
+    <div class="key">→ ПРАВО</div>
   </div>
 
   <script>
@@ -226,6 +455,20 @@
     const countdownElement = document.getElementById('countdown');
     const gameOverScreen = document.getElementById('gameOver');
     const thanksScreen = document.getElementById('thanksScreen');
+    const levelCompleteScreen = document.getElementById('levelComplete');
+    const finalScreen = document.getElementById('finalScreen');
+    const decemberText = document.getElementById('decemberText');
+    const agencyText = document.getElementById('agencyText');
+    const duetText = document.getElementById('duetText');
+    const extendText = document.getElementById('extendText');
+    const laserText = document.getElementById('laserText');
+    const catchText = document.getElementById('catchText');
+    const slowText = document.getElementById('slowText');
+    const disruptionText = document.getElementById('disruptionText');
+    const playerText = document.getElementById('playerText');
+    const comboText = document.getElementById('comboText');
+    const whatsappBtn = document.getElementById('whatsappBtn');
+    const finalRestartBtn = document.getElementById('finalRestartBtn');
     
     // Игровые переменные
     let gameStarted = false;
@@ -237,6 +480,37 @@
     let bonusMultiplier = 1;
     let countdown = 5;
     let ballLost = false;
+    let paddleWidth = 80;
+    let decemberBonusActive = false;
+    let lightningBonusActive = false;
+    let megaBallActive = false;
+    let bigBallBonusActive = false;
+    let snowEffectActive = false;
+    let comboCount = 0;
+    let screenShake = 0;
+    let comboEffects = [];
+    
+    // Новые бонусы
+    let duetBonusActive = false;
+    let extendBonusActive = false;
+    let laserBonusActive = false;
+    let catchBonusActive = false;
+    let slowBonusActive = false;
+    let disruptionBonusActive = false;
+    let playerBonusActive = false;
+    
+    // Таймеры для бонусов
+    let bonusTimers = {
+      laser: 0,
+      catch: 0,
+      slow: 0
+    };
+    
+    // Управление с клавиатуры
+    let keys = {
+      left: false,
+      right: false
+    };
     
     // Размеры
     const brickWidth = 25;
@@ -246,53 +520,95 @@
     const bricksPerRow = 13;
     const totalRows = 16;
     
-    // НОВАЯ ШКАЛА ГОНОРАРОВ
+    // ШКАЛА ГОНОРАРОВ
     const brickRewards = {
       'A': 10000,  // АКСУ
       'P': 50000,  // ПВЛ
       'N': 80000,  // НСК
       'S': 100000, // СПБ
-      'M': 150000  // МСК
+      'M': 150000, // МСК
+      'D': 200000, // ДЕКАБРЬ
+      'L': 250000, // МОЛНИЯ
+      'B': 300000, // MEGA BALL
+      'T': 350000, // TWIN - бонус "Дуэт"
+      'E': 400000, // EXTEND - бонус "Увеличение платформы"
+      'R': 450000, // LASER - бонус "Лазер"
+      'C': 500000, // CATCH - бонус "Магнит"
+      'O': 550000, // SLOW - бонус "Замедление"
+      'U': 650000, // DISRUPTION - бонус "Разделение"
+      'I': 700000  // PLAYER - бонус "+2 жизни"
     };
     
-    // Уровни
-    const levels = [
-      // Уровень 1: 13x16 = 208 кирпичей
-      Array(totalRows).fill().map((_, rowIndex) => 
-        Array(bricksPerRow).fill().map((_, colIndex) => {
-          // Распределение типов кирпичей по рядам
-          if (rowIndex < 4) return 'M'; // МСК - 4 ряда
-          if (rowIndex < 6) return 'S'; // СПБ - 2 ряда
-          if (rowIndex < 8) return 'N'; // НСК - 2 ряда
-          if (rowIndex < 11) return 'P'; // ПВЛ - 3 ряда
-          return 'A'; // АКСУ - 5 рядов
-        })
-      )
-    ];
-
     // Цвета кирпичей
     const brickColors = {
       'M': { color: '#FFFFFF', textColor: '#000000', city: 'МСК' },
       'S': { color: '#0000FF', textColor: '#FFFFFF', city: 'СПБ' },
       'N': { color: '#FF0000', textColor: '#FFFFFF', city: 'НСК' },
       'P': { color: '#0000FF', textColor: '#FFD700', city: 'ПВЛ' },
-      'A': { color: '#0000FF', textColor: '#FFD700', city: 'АКСУ' }
+      'A': { color: '#0000FF', textColor: '#FFD700', city: 'АКСУ' },
+      'D': { color: '#00FFFF', textColor: '#000000', city: 'ДЕКАБРЬ' },
+      'L': { color: '#FFFF00', textColor: '#000000', city: '⚡' },
+      'B': { color: '#FF00FF', textColor: '#000000', city: 'MEGA' },
+      'T': { color: '#FF69B4', textColor: '#000000', city: 'TWIN' },
+      'E': { color: '#FFA500', textColor: '#000000', city: 'EXTEND' },
+      'R': { color: '#FF0000', textColor: '#FFFFFF', city: 'LASER' },
+      'C': { color: '#00CED1', textColor: '#000000', city: 'CATCH' },
+      'O': { color: '#9370DB', textColor: '#000000', city: '⏱️' },
+      'U': { color: '#1E90FF', textColor: '#000000', city: 'SPLIT' },
+      'I': { color: '#C0C0C0', textColor: '#000000', city: 'LIFE' }
     };
+
+    // Уровни
+    const levels = [
+      Array(totalRows).fill().map((_, rowIndex) => 
+        Array(bricksPerRow).fill().map((_, colIndex) => {
+          if (rowIndex < 4) return 'M';
+          if (rowIndex < 6) return 'S';
+          if (rowIndex < 8) return 'N';
+          if (rowIndex < 11) return 'P';
+          return 'A';
+        })
+      )
+    ];
 
     // Игровые объекты
     let bricks = [];
     let bonuses = [];
     let particles = [];
+    let balls = [];
+    let decemberBonuses = [];
+    let lightningBonuses = [];
+    let lightningEffects = [];
+    let bigBallBonuses = [];
+    let snowflakes = [];
+    let comboSmileys = [];
+    let twinBonuses = [];
+    let extendBonuses = [];
+    let laserBonuses = [];
+    let catchBonuses = [];
+    let slowBonuses = [];
+    let disruptionBonuses = [];
+    let playerBonuses = [];
+    let lasers = [];
+    let rewardTexts = [];
     
     const paddle = {
       x: 0,
       y: 0,
-      width: 80,
+      width: paddleWidth,
       height: 12,
       speed: 8
     };
     
-    const ball = {
+    const paddle2 = {
+      x: 0,
+      y: 0,
+      width: paddleWidth / 2,
+      height: 12,
+      speed: 8
+    };
+    
+    const mainBall = {
       x: 0,
       y: 0,
       width: 8,
@@ -305,7 +621,6 @@
     // Функция вибрации
     function vibrate() {
       if (navigator.vibrate) {
-        // Вибрация при столкновении с кирпичом
         navigator.vibrate(50);
       }
     }
@@ -316,8 +631,6 @@
       createLevel();
       resetBall();
       updateStats();
-      
-      // Запускаем отсчет
       startCountdown();
     }
 
@@ -335,11 +648,12 @@
       }, 1000);
     }
 
-    // Создание уровня
+    // Создание уровня с гарантированным добавлением всех бонусных кирпичей
     function createLevel() {
       bricks = [];
       const levelData = levels[level - 1];
       
+      // Сначала создаем все обычные кирпичи
       for (let row = 0; row < levelData.length; row++) {
         for (let col = 0; col < levelData[row].length; col++) {
           const type = levelData[row][col];
@@ -355,31 +669,528 @@
             textColor: brickInfo.textColor,
             city: brickInfo.city,
             type: type,
-            reward: brickRewards[type] // Добавляем награду за кирпич
+            reward: brickRewards[type]
+          });
+        }
+      }
+      
+      // Теперь добавляем ВСЕ бонусные кирпичи в случайные позиции
+      const bonusBricks = ['D', 'L', 'B', 'T', 'E', 'R', 'C', 'O', 'U', 'I'];
+      const usedPositions = new Set();
+      
+      bonusBricks.forEach(bonusType => {
+        let attempts = 0;
+        let added = false;
+        
+        while (attempts < 100 && !added) {
+          attempts++;
+          
+          const randomRow = Math.floor(Math.random() * totalRows);
+          const randomCol = Math.floor(Math.random() * bricksPerRow);
+          const positionKey = `${randomRow}-${randomCol}`;
+          
+          if (!usedPositions.has(positionKey)) {
+            const brickIndex = bricks.findIndex(brick => {
+              const brickRow = Math.floor((brick.y - wallSize) / (brickHeight + brickGap));
+              const brickCol = Math.floor((brick.x - wallSize) / (brickWidth + brickGap));
+              return brickRow === randomRow && brickCol === randomCol;
+            });
+            
+            if (brickIndex !== -1) {
+              const brickInfo = brickColors[bonusType];
+              bricks[brickIndex] = {
+                x: wallSize + (brickWidth + brickGap) * randomCol,
+                y: wallSize + (brickHeight + brickGap) * randomRow,
+                width: brickWidth,
+                height: brickHeight,
+                color: brickInfo.color,
+                textColor: brickInfo.textColor,
+                city: brickInfo.city,
+                type: bonusType,
+                reward: brickRewards[bonusType]
+              };
+              
+              usedPositions.add(positionKey);
+              added = true;
+            }
+          }
+        }
+      });
+    }
+
+    // Сброс мяча
+    function resetBall() {
+      balls = [];
+      
+      mainBall.x = paddle.x + paddle.width / 2 - mainBall.width / 2;
+      mainBall.y = paddle.y - mainBall.height - 5;
+      mainBall.dx = 0;
+      mainBall.dy = 0;
+      
+      balls.push({...mainBall});
+      
+      ballLost = false;
+      megaBallActive = false;
+      bigBallBonusActive = false;
+      comboCount = 0;
+      
+      // Сброс временных бонусов при потере мяча
+      duetBonusActive = false;
+      laserBonusActive = false;
+      catchBonusActive = false;
+      slowBonusActive = false;
+      disruptionBonusActive = false;
+      playerBonusActive = false;
+      
+      // Сброс таймеров
+      bonusTimers = {
+        laser: 0,
+        catch: 0,
+        slow: 0
+      };
+      
+      // Восстановление нормальной скорости шаров
+      balls.forEach(ball => {
+        ball.speed = 5;
+      });
+      
+      paddle.width = paddleWidth;
+      paddle2.width = paddleWidth / 2;
+    }
+
+    // Запуск мяча
+    function launchBall() {
+      balls.forEach(ball => {
+        if (ball.dx === 0 && ball.dy === 0) {
+          // При активированном магните мяч летит строго вверх
+          if (catchBonusActive) {
+            ball.dx = 0;
+            ball.dy = -ball.speed;
+          } else {
+            const angle = (Math.random() * 120 - 60) * Math.PI / 180;
+            ball.dx = Math.cos(angle) * ball.speed;
+            ball.dy = Math.sin(angle) * ball.speed;
+            
+            if (ball.dy > 0) ball.dy = -ball.dy;
+          }
+        }
+      });
+    }
+
+    // Создание нескольких шариков (бонус "Декабрь")
+    function createMultipleBalls() {
+      for (let i = 0; i < 4; i++) {
+        const newBall = {
+          x: paddle.x + paddle.width / 2 - mainBall.width / 2,
+          y: paddle.y - mainBall.height - 5,
+          width: 8,
+          height: 8,
+          dx: 0,
+          dy: 0,
+          speed: 5
+        };
+        
+        const angle = (Math.random() * 120 - 60) * Math.PI / 180;
+        newBall.dx = Math.cos(angle) * newBall.speed;
+        newBall.dy = Math.sin(angle) * newBall.speed;
+        
+        if (newBall.dy > 0) newBall.dy = -Math.abs(newBall.dy);
+        
+        balls.push(newBall);
+      }
+      
+      activateDecemberBonus();
+    }
+
+    // Активация бонуса "Декабрь"
+    function activateDecemberBonus() {
+      decemberBonusActive = true;
+      snowEffectActive = true;
+      
+      decemberText.style.opacity = '1';
+      createSnowEffect();
+      
+      setTimeout(() => {
+        decemberText.style.opacity = '0';
+      }, 3000);
+      
+      setTimeout(() => {
+        snowEffectActive = false;
+      }, 5000);
+    }
+
+    // Создание эффекта снегопада
+    function createSnowEffect() {
+      for (let i = 0; i < 30; i++) {
+        snowflakes.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * -100,
+          size: Math.random() * 15 + 10,
+          speed: Math.random() * 2 + 1,
+          text: "❄"
+        });
+      }
+    }
+
+    // Обновление эффекта снегопада
+    function updateSnowEffect() {
+      for (let i = snowflakes.length - 1; i >= 0; i--) {
+        const snowflake = snowflakes[i];
+        snowflake.y += snowflake.speed;
+        
+        if (snowflake.y > canvas.height) {
+          snowflakes.splice(i, 1);
+        }
+      }
+      
+      if (snowEffectActive && Math.random() < 0.1) {
+        snowflakes.push({
+          x: Math.random() * canvas.width,
+          y: -20,
+          size: Math.random() * 15 + 10,
+          speed: Math.random() * 2 + 1,
+          text: "❄"
+        });
+      }
+    }
+
+    // Активация бонуса "Агентство"
+    function activateAgencyBonus() {
+      bonusActive = true;
+      bonusMultiplier = 2;
+      
+      agencyText.style.opacity = '1';
+      
+      setTimeout(() => {
+        agencyText.style.opacity = '0';
+      }, 3000);
+    }
+
+    // Активация бонуса "Дуэт"
+    function activateDuetBonus() {
+      duetBonusActive = true;
+      
+      duetText.style.opacity = '1';
+      
+      setTimeout(() => {
+        duetText.style.opacity = '0';
+      }, 3000);
+      
+      paddle.width = paddleWidth / 2;
+      paddle2.width = paddleWidth / 2;
+      
+      paddle2.x = paddle.x + paddle.width + 10;
+      paddle2.y = paddle.y;
+    }
+
+    // Активация бонуса "Увеличение платформы"
+    function activateExtendBonus() {
+      extendBonusActive = true;
+      // Длится до первой потери шарика
+      
+      extendText.style.opacity = '1';
+      
+      setTimeout(() => {
+        extendText.style.opacity = '0';
+      }, 3000);
+      
+      paddle.width = paddleWidth * 1.5;
+    }
+
+    // Активация бонуса "Лазер"
+    function activateLaserBonus() {
+      laserBonusActive = true;
+      bonusTimers.laser = 1200; // 20 секунд при 60 FPS
+      
+      laserText.style.opacity = '1';
+      
+      setTimeout(() => {
+        laserText.style.opacity = '0';
+      }, 3000);
+    }
+
+    // Активация бонуса "Магнит"
+    function activateCatchBonus() {
+      catchBonusActive = true;
+      bonusTimers.catch = 1800; // 30 секунд
+      
+      catchText.style.opacity = '1';
+      
+      setTimeout(() => {
+        catchText.style.opacity = '0';
+      }, 3000);
+    }
+
+    // Активация бонуса "Замедление"
+    function activateSlowBonus() {
+      slowBonusActive = true;
+      bonusTimers.slow = 1800; // 30 секунд
+      
+      slowText.style.opacity = '1';
+      
+      setTimeout(() => {
+        slowText.style.opacity = '0';
+      }, 3000);
+      
+      // Замедляем все шары
+      balls.forEach(ball => {
+        ball.dx *= 0.5;
+        ball.dy *= 0.5;
+        ball.speed *= 0.5;
+      });
+    }
+
+    // Активация бонуса "Разделение"
+    function activateDisruptionBonus() {
+      disruptionBonusActive = true;
+      
+      disruptionText.style.opacity = '1';
+      
+      setTimeout(() => {
+        disruptionText.style.opacity = '0';
+      }, 3000);
+      
+      // Создаем 2 дополнительных шара из каждого существующего
+      const currentBalls = [...balls];
+      currentBalls.forEach(ball => {
+        for (let i = 0; i < 2; i++) {
+          const newBall = {
+            x: ball.x,
+            y: ball.y,
+            width: ball.width,
+            height: ball.height,
+            dx: ball.dx + (Math.random() - 0.5) * 2,
+            dy: ball.dy + (Math.random() - 0.5) * 2,
+            speed: ball.speed
+          };
+          balls.push(newBall);
+        }
+      });
+    }
+
+    // Активация бонуса "+2 жизни"
+    function activatePlayerBonus() {
+      playerBonusActive = true;
+      lives += 2;
+      
+      playerText.style.opacity = '1';
+      
+      setTimeout(() => {
+        playerText.style.opacity = '0';
+      }, 3000);
+      
+      updateStats();
+    }
+
+    // Стрельба лазером
+    function shootLaser() {
+      if (!laserBonusActive) return;
+      
+      // Создаем два лазера по краям платформы
+      lasers.push({
+        x: paddle.x + 10,
+        y: paddle.y,
+        width: 3,
+        height: 15,
+        speed: 10
+      });
+      
+      lasers.push({
+        x: paddle.x + paddle.width - 10,
+        y: paddle.y,
+        width: 3,
+        height: 15,
+        speed: 10
+      });
+    }
+
+    // Обновление лазеров
+    function updateLasers() {
+      for (let i = lasers.length - 1; i >= 0; i--) {
+        const laser = lasers[i];
+        laser.y -= laser.speed;
+        
+        if (laser.y < 0) {
+          lasers.splice(i, 1);
+          continue;
+        }
+        
+        for (let j = bricks.length - 1; j >= 0; j--) {
+          const brick = bricks[j];
+          if (checkCollision(laser, brick)) {
+            const reward = brick.reward * bonusMultiplier;
+            score += reward;
+            createRewardText(brick.x + brick.width/2, brick.y + brick.height/2, reward);
+            createBrickBreakEffect(brick.x + brick.width/2, brick.y + brick.height/2, brick.color);
+            bricks.splice(j, 1);
+            lasers.splice(i, 1);
+            break;
+          }
+        }
+      }
+    }
+
+    // Обновление таймеров бонусов
+    function updateBonusTimers() {
+      // Лазер (20 секунд)
+      if (bonusTimers.laser > 0) {
+        bonusTimers.laser--;
+        if (bonusTimers.laser === 0) {
+          laserBonusActive = false;
+        }
+      }
+      
+      // Магнит (30 секунд)
+      if (bonusTimers.catch > 0) {
+        bonusTimers.catch--;
+        if (bonusTimers.catch === 0) {
+          catchBonusActive = false;
+        }
+      }
+      
+      // Замедление (30 секунд)
+      if (bonusTimers.slow > 0) {
+        bonusTimers.slow--;
+        if (bonusTimers.slow === 0) {
+          slowBonusActive = false;
+          // Восстанавливаем нормальную скорость шаров
+          balls.forEach(ball => {
+            ball.dx *= 2;
+            ball.dy *= 2;
+            ball.speed *= 2;
           });
         }
       }
     }
 
-    // Сброс мяча
-    function resetBall() {
-      ball.x = paddle.x + paddle.width / 2 - ball.width / 2;
-      ball.y = paddle.y - ball.height - 5;
-      ball.dx = 0;
-      ball.dy = 0;
-      ballLost = false;
+    // Активация эффекта комбо
+    function activateComboEffect(count) {
+      screenShake = 20;
+      
+      comboText.textContent = `КОМБО! x${count}`;
+      comboText.style.opacity = '1';
+      
+      createComboSmileys(count);
+      
+      setTimeout(() => {
+        comboText.style.opacity = '0';
+      }, 2000);
+      
+      if (navigator.vibrate) {
+        navigator.vibrate(200);
+      }
     }
 
-    // Запуск мяча
-    function launchBall() {
-      if (ball.dx === 0 && ball.dy === 0) {
-        // Случайный угол запуска (от -60 до 60 градусов)
-        const angle = (Math.random() * 120 - 60) * Math.PI / 180;
-        ball.dx = Math.cos(angle) * ball.speed;
-        ball.dy = Math.sin(angle) * ball.speed;
+    // Создание смайликов для комбо
+    function createComboSmileys(count) {
+      const smileys = ["😎", "🔥", "💥", "🚀", "⭐", "🎯", "👑", "💎"];
+      
+      for (let i = 0; i < count * 2; i++) {
+        comboSmileys.push({
+          x: Math.random() * canvas.width,
+          y: canvas.height + 20,
+          dx: (Math.random() - 0.5) * 4,
+          dy: -Math.random() * 3 - 2,
+          size: Math.random() * 20 + 15,
+          text: smileys[Math.floor(Math.random() * smileys.length)],
+          life: 60
+        });
+      }
+    }
+
+    // Обновление смайликов комбо
+    function updateComboSmileys() {
+      for (let i = comboSmileys.length - 1; i >= 0; i--) {
+        const smiley = comboSmileys[i];
+        smiley.x += smiley.dx;
+        smiley.y += smiley.dy;
+        smiley.life--;
         
-        // Гарантируем, что мяч летит вверх
-        if (ball.dy > 0) ball.dy = -ball.dy;
+        if (smiley.life <= 0 || smiley.y < -50) {
+          comboSmileys.splice(i, 1);
+        }
+      }
+    }
+
+    // Обновление тряски экрана
+    function updateScreenShake() {
+      if (screenShake > 0) {
+        screenShake--;
+        return {
+          x: (Math.random() - 0.5) * screenShake,
+          y: (Math.random() - 0.5) * screenShake
+        };
+      }
+      return { x: 0, y: 0 };
+    }
+
+    // Активация Mega-шара
+    function activateMegaBall() {
+      megaBallActive = true;
+      lightningBonusActive = true;
+      
+      balls.forEach(ball => {
+        ball.width = 16;
+        ball.height = 16;
+        ball.speed = 7;
+      });
+      
+      setTimeout(() => {
+        megaBallActive = false;
+        lightningBonusActive = false;
+        
+        balls.forEach(ball => {
+          ball.width = 8;
+          ball.height = 8;
+          ball.speed = 5;
+        });
+      }, 10000);
+    }
+
+    // Активация Big Ball
+    function activateBigBall() {
+      bigBallBonusActive = true;
+      
+      balls.forEach(ball => {
+        ball.width = 24;
+        ball.height = 24;
+        ball.speed = 6;
+      });
+      
+      setTimeout(() => {
+        bigBallBonusActive = false;
+        
+        balls.forEach(ball => {
+          ball.width = 8;
+          ball.height = 8;
+          ball.speed = 5;
+        });
+      }, 8000);
+    }
+
+    // Создание эффекта молнии
+    function createLightningEffect(x, y) {
+      lightningEffects.push({
+        x: x,
+        y: y,
+        life: 10,
+        segments: []
+      });
+      
+      const segmentCount = 5;
+      let lastX = x;
+      let lastY = y;
+      
+      for (let i = 0; i < segmentCount; i++) {
+        const segment = {
+          x1: lastX,
+          y1: lastY,
+          x2: lastX + (Math.random() - 0.5) * 20,
+          y2: lastY - 20 - Math.random() * 10
+        };
+        lightningEffects[lightningEffects.length - 1].segments.push(segment);
+        lastX = segment.x2;
+        lastY = segment.y2;
       }
     }
 
@@ -388,8 +1199,37 @@
       document.getElementById('score').textContent = score.toLocaleString();
       document.getElementById('level').textContent = level;
       document.getElementById('lives').textContent = lives;
-      document.getElementById('bonus').textContent = bonusActive ? 'x2 ГОНОРАР!' : 'НЕТ';
+      
+      let bonusText = 'НЕТ';
       if (bonusActive) {
+        bonusText = 'x2 ГОНОРАР!';
+      } else if (decemberBonusActive) {
+        bonusText = '5 ШАРИКОВ!';
+      } else if (lightningBonusActive) {
+        bonusText = 'MEGA-ШАР!';
+      } else if (bigBallBonusActive) {
+        bonusText = 'BIG BALL!';
+      } else if (duetBonusActive) {
+        bonusText = 'ДУЭТ!';
+      } else if (extendBonusActive) {
+        bonusText = 'УВЕЛИЧЕНИЕ!';
+      } else if (laserBonusActive) {
+        bonusText = 'ЛАЗЕР!';
+      } else if (catchBonusActive) {
+        bonusText = 'МАГНИТ!';
+      } else if (slowBonusActive) {
+        bonusText = 'ЗАМЕДЛЕНИЕ!';
+      } else if (disruptionBonusActive) {
+        bonusText = 'РАЗДЕЛЕНИЕ!';
+      } else if (playerBonusActive) {
+        bonusText = '+2 ЖИЗНИ!';
+      }
+      
+      document.getElementById('bonus').textContent = bonusText;
+      
+      if (bonusActive || decemberBonusActive || lightningBonusActive || bigBallBonusActive || 
+          duetBonusActive || extendBonusActive || laserBonusActive || catchBonusActive ||
+          slowBonusActive || disruptionBonusActive || playerBonusActive) {
         document.getElementById('bonus').classList.add('bonus-active');
       } else {
         document.getElementById('bonus').classList.remove('bonus-active');
@@ -416,6 +1256,11 @@
       const touch = e.touches[0];
       touchX = touch.clientX;
       isDragging = true;
+      
+      // Стрельба лазером при касании
+      if (laserBonusActive) {
+        shootLaser();
+      }
     });
 
     canvas.addEventListener('touchmove', (e) => {
@@ -427,10 +1272,20 @@
       
       paddle.x += deltaX * 2;
       
-      // Границы
+      if (duetBonusActive) {
+        paddle2.x += deltaX * 2;
+      }
+      
       if (paddle.x < wallSize) paddle.x = wallSize;
       if (paddle.x + paddle.width > canvas.width - wallSize) {
         paddle.x = canvas.width - wallSize - paddle.width;
+      }
+      
+      if (duetBonusActive) {
+        if (paddle2.x < wallSize) paddle2.x = wallSize;
+        if (paddle2.x + paddle2.width > canvas.width - wallSize) {
+          paddle2.x = canvas.width - wallSize - paddle2.width;
+        }
       }
       
       touchX = touch.clientX;
@@ -438,6 +1293,25 @@
 
     canvas.addEventListener('touchend', () => {
       isDragging = false;
+    });
+
+    // Обработка нажатий клавиш
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        keys.left = true;
+      } else if (e.key === 'ArrowRight') {
+        keys.right = true;
+      } else if (e.key === ' ' && laserBonusActive) {
+        shootLaser();
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      if (e.key === 'ArrowLeft') {
+        keys.left = false;
+      } else if (e.key === 'ArrowRight') {
+        keys.right = false;
+      }
     });
 
     // Запуск игры
@@ -482,147 +1356,360 @@
 
     // Обновление игры
     function update() {
-      // Движение мяча
-      ball.x += ball.dx;
-      ball.y += ball.dy;
-      
-      // Столкновение со стенами
-      if (ball.x < wallSize) {
-        ball.x = wallSize;
-        ball.dx = Math.abs(ball.dx);
-      } else if (ball.x + ball.width > canvas.width - wallSize) {
-        ball.x = canvas.width - wallSize - ball.width;
-        ball.dx = -Math.abs(ball.dx);
-      }
-      
-      if (ball.y < wallSize) {
-        ball.y = wallSize;
-        ball.dy = Math.abs(ball.dy);
-      }
-      
-      // Потеря мяча
-      if (ball.y > canvas.height) {
-        if (!ballLost) {
-          lives--;
-          updateStats();
-          if (lives <= 0) {
-            gameOver();
-          } else {
-            restartAfterBallLoss();
-          }
+      if (keys.left) {
+        paddle.x -= paddle.speed;
+        if (duetBonusActive) {
+          paddle2.x -= paddle.speed;
         }
-        return;
+      }
+      if (keys.right) {
+        paddle.x += paddle.speed;
+        if (duetBonusActive) {
+          paddle2.x += paddle.speed;
+        }
       }
       
-      // Столкновение с платформой
-      if (checkCollision(ball, paddle)) {
-        // Вычисляем точку удара относительно центра платформы
-        const hitPos = (ball.x + ball.width/2 - paddle.x) / paddle.width;
-        
-        // Нормализуем от -1 до 1
-        const normalizedHitPos = hitPos * 2 - 1;
-        
-        // Угол отскока (от -75 до 75 градусов)
-        const maxBounceAngle = 75 * Math.PI / 180;
-        const bounceAngle = normalizedHitPos * maxBounceAngle;
-        
-        // Устанавливаем новое направление
-        const speed = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
-        ball.dx = Math.sin(bounceAngle) * speed;
-        ball.dy = -Math.abs(Math.cos(bounceAngle) * speed);
-        
-        // Корректируем позицию мяча
-        ball.y = paddle.y - ball.height;
+      if (paddle.x < wallSize) paddle.x = wallSize;
+      if (paddle.x + paddle.width > canvas.width - wallSize) {
+        paddle.x = canvas.width - wallSize - paddle.width;
       }
       
-      // Столкновение с кирпичами
-      for (let i = bricks.length - 1; i >= 0; i--) {
-        const brick = bricks[i];
-        if (checkCollision(ball, brick)) {
-          // ВИБРАЦИЯ при столкновении с кирпичом
-          vibrate();
-          
-          // Бонус от СПБ
-          if (brick.type === 'S' && Math.random() < 0.3) {
-            bonuses.push({
-              x: brick.x,
-              y: brick.y,
-              width: brickWidth,
-              height: brickHeight,
-              text: "АГЕНТСТВО",
-              color: "#00FF00",
-              speed: 2
-            });
-          }
-          
-          // Определяем сторону столкновения для правильного отскока
-          const ballCenterX = ball.x + ball.width/2;
-          const ballCenterY = ball.y + ball.height/2;
-          const brickCenterX = brick.x + brick.width/2;
-          const brickCenterY = brick.y + brick.height/2;
-          
-          const dx = ballCenterX - brickCenterX;
-          const dy = ballCenterY - brickCenterY;
-          const width = (ball.width + brick.width) / 2;
-          const height = (ball.height + brick.height) / 2;
-          const crossWidth = width * dy;
-          const crossHeight = height * dx;
-          
-          if (Math.abs(dx) <= width && Math.abs(dy) <= height) {
-            if (crossWidth > crossHeight) {
-              // Столкновение сверху или снизу
-              ball.dy = -ball.dy;
-            } else {
-              // Столкновение слева или справа
-              ball.dx = -ball.dx;
+      if (duetBonusActive) {
+        if (paddle2.x < wallSize) paddle2.x = wallSize;
+        if (paddle2.x + paddle2.width > canvas.width - wallSize) {
+          paddle2.x = canvas.width - wallSize - paddle2.width;
+        }
+      }
+      
+      updateSnowEffect();
+      updateComboSmileys();
+      updateLasers();
+      updateBonusTimers();
+      
+      for (let i = balls.length - 1; i >= 0; i--) {
+        const ball = balls[i];
+        
+        ball.x += ball.dx;
+        ball.y += ball.dy;
+        
+        if (ball.x < wallSize) {
+          ball.x = wallSize;
+          ball.dx = Math.abs(ball.dx);
+        } else if (ball.x + ball.width > canvas.width - wallSize) {
+          ball.x = canvas.width - wallSize - ball.width;
+          ball.dx = -Math.abs(ball.dx);
+        }
+        
+        if (ball.y < wallSize) {
+          ball.y = wallSize;
+          ball.dy = Math.abs(ball.dy);
+        }
+        
+        if (ball.y > canvas.height) {
+          if (!ballLost) {
+            balls.splice(i, 1);
+            
+            if (bonusActive) {
+              bonusActive = false;
+              bonusMultiplier = 1;
+              updateStats();
+            }
+            
+            // Сброс временных бонусов при потере мяча
+            extendBonusActive = false;
+            paddle.width = paddleWidth;
+            
+            comboCount = 0;
+            
+            if (balls.length === 0) {
+              lives--;
+              updateStats();
+              if (lives <= 0) {
+                gameOver();
+              } else {
+                restartAfterBallLoss();
+              }
             }
           }
-          
-          // НОВАЯ СИСТЕМА НАЧИСЛЕНИЯ ГОНОРАРА
-          const reward = brick.reward * bonusMultiplier;
-          score += reward;
-          
-          // Создаем эффект текста с наградой
-          createRewardText(brick.x + brick.width/2, brick.y + brick.height/2, reward);
-          
-          bricks.splice(i, 1);
-          updateStats();
-          break;
+          continue;
         }
-      }
-      
-      // Обновление бонусов
-      for (let i = bonuses.length - 1; i >= 0; i--) {
-        const bonus = bonuses[i];
-        bonus.y += bonus.speed;
         
-        if (checkCollision(bonus, paddle)) {
-          bonusActive = true;
-          bonusMultiplier = 2;
-          bonuses.splice(i, 1);
-          updateStats();
-          setTimeout(() => {
-            bonusActive = false;
-            bonusMultiplier = 1;
-            updateStats();
-          }, 10000);
-        } else if (bonus.y > canvas.height) {
-          bonuses.splice(i, 1);
+        let paddleHit = false;
+        if (checkCollision(ball, paddle)) {
+          paddleHit = true;
+        } else if (duetBonusActive && checkCollision(ball, paddle2)) {
+          paddleHit = true;
+        }
+        
+        if (paddleHit) {
+          if (catchBonusActive) {
+            ball.dx = 0;
+            ball.dy = 0;
+            ball.x = paddle.x + paddle.width / 2 - ball.width / 2;
+            ball.y = paddle.y - ball.height - 5;
+            
+            canvas.addEventListener('touchstart', function launchOnTouch() {
+              launchBall();
+              canvas.removeEventListener('touchstart', launchOnTouch);
+            });
+            
+            document.addEventListener('keydown', function launchOnSpace(e) {
+              if (e.key === ' ') {
+                launchBall();
+                document.removeEventListener('keydown', launchOnSpace);
+              }
+            });
+          } else {
+            const currentPaddle = (duetBonusActive && checkCollision(ball, paddle2)) ? paddle2 : paddle;
+            
+            const hitPos = (ball.x + ball.width/2 - currentPaddle.x) / currentPaddle.width;
+            const normalizedHitPos = hitPos * 2 - 1;
+            const maxBounceAngle = 75 * Math.PI / 180;
+            const bounceAngle = normalizedHitPos * maxBounceAngle;
+            
+            const speed = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
+            ball.dx = Math.sin(bounceAngle) * speed;
+            ball.dy = -Math.abs(Math.cos(bounceAngle) * speed);
+            
+            ball.y = currentPaddle.y - ball.height;
+          }
+          
+          createHitEffect(paddle.x + paddle.width/2, paddle.y);
+        }
+        
+        let bricksDestroyedThisHit = 0;
+        for (let j = bricks.length - 1; j >= 0; j--) {
+          const brick = bricks[j];
+          if (checkCollision(ball, brick)) {
+            vibrate();
+            bricksDestroyedThisHit++;
+            
+            if (brick.type === 'S' && Math.random() < 0.3) {
+              bonuses.push({
+                x: brick.x,
+                y: brick.y,
+                width: brickWidth,
+                height: brickHeight,
+                text: "АГЕНТСТВО",
+                color: "#00FF00",
+                speed: 2
+              });
+            }
+            
+            if (brick.type === 'D') {
+              decemberBonuses.push({
+                x: brick.x + brick.width/2,
+                y: brick.y + brick.height/2,
+                width: 15,
+                height: 15,
+                text: "❄",
+                color: "#FFFFFF",
+                speed: 3
+              });
+            }
+            
+            if (brick.type === 'L') {
+              lightningBonuses.push({
+                x: brick.x + brick.width/2,
+                y: brick.y + brick.height/2,
+                width: 15,
+                height: 15,
+                text: "⚡",
+                color: "#FFFF00",
+                speed: 3
+              });
+            }
+            
+            if (brick.type === 'B') {
+              bigBallBonuses.push({
+                x: brick.x + brick.width/2,
+                y: brick.y + brick.height/2,
+                width: 20,
+                height: 20,
+                text: "➕",
+                color: "#FF00FF",
+                speed: 2
+              });
+            }
+            
+            if (brick.type === 'T') {
+              twinBonuses.push({
+                x: brick.x + brick.width/2,
+                y: brick.y + brick.height/2,
+                width: 15,
+                height: 15,
+                text: "🎤+",
+                color: "#FF69B4",
+                speed: 2
+              });
+            }
+            
+            if (brick.type === 'E') {
+              extendBonuses.push({
+                x: brick.x + brick.width/2,
+                y: brick.y + brick.height/2,
+                width: 15,
+                height: 15,
+                text: "+",
+                color: "#FFA500",
+                speed: 2
+              });
+            }
+            
+            if (brick.type === 'R') {
+              laserBonuses.push({
+                x: brick.x + brick.width/2,
+                y: brick.y + brick.height/2,
+                width: 15,
+                height: 15,
+                text: "🔫",
+                color: "#FF0000",
+                speed: 2
+              });
+            }
+            
+            if (brick.type === 'C') {
+              catchBonuses.push({
+                x: brick.x + brick.width/2,
+                y: brick.y + brick.height/2,
+                width: 15,
+                height: 15,
+                text: "🧲",
+                color: "#00CED1",
+                speed: 2
+              });
+            }
+            
+            if (brick.type === 'O') {
+              slowBonuses.push({
+                x: brick.x + brick.width/2,
+                y: brick.y + brick.height/2,
+                width: 15,
+                height: 15,
+                text: "⏱️",
+                color: "#9370DB",
+                speed: 2
+              });
+            }
+            
+            if (brick.type === 'U') {
+              disruptionBonuses.push({
+                x: brick.x + brick.width/2,
+                y: brick.y + brick.height/2,
+                width: 15,
+                height: 15,
+                text: "➗",
+                color: "#1E90FF",
+                speed: 2
+              });
+            }
+            
+            if (brick.type === 'I') {
+              playerBonuses.push({
+                x: brick.x + brick.width/2,
+                y: brick.y + brick.height/2,
+                width: 15,
+                height: 15,
+                text: "❤️",
+                color: "#C0C0C0",
+                speed: 2
+              });
+            }
+            
+            if (megaBallActive || bigBallBonusActive) {
+              if (megaBallActive) {
+                createLightningEffect(brick.x + brick.width/2, brick.y + brick.height/2);
+              }
+              
+              const reward = brick.reward * bonusMultiplier;
+              score += reward;
+              createRewardText(brick.x + brick.width/2, brick.y + brick.height/2, reward);
+              createBrickBreakEffect(brick.x + brick.width/2, brick.y + brick.height/2, brick.color);
+              bricks.splice(j, 1);
+            } else {
+              const ballCenterX = ball.x + ball.width/2;
+              const ballCenterY = ball.y + ball.height/2;
+              const brickCenterX = brick.x + brick.width/2;
+              const brickCenterY = brick.y + brick.height/2;
+              
+              const dx = ballCenterX - brickCenterX;
+              const dy = ballCenterY - brickCenterY;
+              const width = (ball.width + brick.width) / 2;
+              const height = (ball.height + brick.height) / 2;
+              const crossWidth = width * dy;
+              const crossHeight = height * dx;
+              
+              if (Math.abs(dx) <= width && Math.abs(dy) <= height) {
+                if (crossWidth > crossHeight) {
+                  ball.dy = -ball.dy;
+                } else {
+                  ball.dx = -ball.dx;
+                }
+              }
+              
+              const reward = brick.reward * bonusMultiplier;
+              score += reward;
+              
+              createRewardText(brick.x + brick.width/2, brick.y + brick.height/2, reward);
+              createBrickBreakEffect(brick.x + brick.width/2, brick.y + brick.height/2, brick.color);
+              
+              bricks.splice(j, 1);
+            }
+          }
+        }
+        
+        if (bricksDestroyedThisHit >= 5) {
+          comboCount = bricksDestroyedThisHit;
+          activateComboEffect(comboCount);
         }
       }
       
-      // Обновление эффектов текста
-      updateRewardTexts();
+      updateBonuses(bonuses, () => activateAgencyBonus());
+      updateBonuses(decemberBonuses, () => createMultipleBalls());
+      updateBonuses(lightningBonuses, () => activateMegaBall());
+      updateBonuses(bigBallBonuses, () => activateBigBall());
+      updateBonuses(twinBonuses, () => activateDuetBonus());
+      updateBonuses(extendBonuses, () => activateExtendBonus());
+      updateBonuses(laserBonuses, () => activateLaserBonus());
+      updateBonuses(catchBonuses, () => activateCatchBonus());
+      updateBonuses(slowBonuses, () => activateSlowBonus());
+      updateBonuses(disruptionBonuses, () => activateDisruptionBonus());
+      updateBonuses(playerBonuses, () => activatePlayerBonus());
       
-      // Проверка завершения уровня
+      for (let i = lightningEffects.length - 1; i >= 0; i--) {
+        const effect = lightningEffects[i];
+        effect.life--;
+        
+        if (effect.life <= 0) {
+          lightningEffects.splice(i, 1);
+        }
+      }
+      
+      updateRewardTexts();
+      updateParticles();
+      
       if (bricks.length === 0) {
         levelComplete();
       }
     }
 
+    // Обновление бонусов (универсальная функция)
+    function updateBonuses(bonusArray, activateCallback) {
+      for (let i = bonusArray.length - 1; i >= 0; i--) {
+        const bonus = bonusArray[i];
+        bonus.y += bonus.speed;
+        
+        if (checkCollision(bonus, paddle) || (duetBonusActive && checkCollision(bonus, paddle2))) {
+          activateCallback();
+          bonusArray.splice(i, 1);
+          updateStats();
+        } else if (bonus.y > canvas.height) {
+          bonusArray.splice(i, 1);
+        }
+      }
+    }
+
     // Эффекты текста с наградами
-    let rewardTexts = [];
-    
     function createRewardText(x, y, amount) {
       rewardTexts.push({
         x: x,
@@ -645,18 +1732,92 @@
         }
       }
     }
+    
+    // Эффекты частиц
+    function createBrickBreakEffect(x, y, color) {
+      for (let i = 0; i < 5; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          dx: (Math.random() - 0.5) * 4,
+          dy: (Math.random() - 0.5) * 4,
+          size: Math.random() * 3 + 2,
+          color: color,
+          life: 30
+        });
+      }
+    }
+    
+    function createHitEffect(x, y) {
+      for (let i = 0; i < 3; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          dx: (Math.random() - 0.5) * 3,
+          dy: (Math.random() - 0.5) * 3,
+          size: Math.random() * 2 + 1,
+          color: '#ffd700',
+          life: 20
+        });
+      }
+    }
+    
+    function updateParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.dx;
+        p.y += p.dy;
+        p.life--;
+        
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+    }
 
     // Отрисовка
     function render() {
-      context.clearRect(0, 0, canvas.width, canvas.height);
+      const shake = updateScreenShake();
+      context.clearRect(shake.x, shake.y, canvas.width, canvas.height);
+      context.save();
+      context.translate(shake.x, shake.y);
       
-      // Стены
+      snowflakes.forEach(snowflake => {
+        context.fillStyle = '#FFFFFF';
+        context.font = `${snowflake.size}px Arial`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.globalAlpha = 0.7;
+        context.fillText(snowflake.text, snowflake.x, snowflake.y);
+        context.globalAlpha = 1;
+      });
+      
+      comboSmileys.forEach(smiley => {
+        context.fillStyle = '#FFD700';
+        context.font = `${smiley.size}px Arial`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.globalAlpha = smiley.life / 60;
+        context.fillText(smiley.text, smiley.x, smiley.y);
+        context.globalAlpha = 1;
+      });
+      
+      lasers.forEach(laser => {
+        context.fillStyle = '#FF0000';
+        context.fillRect(laser.x - laser.width/2, laser.y, laser.width, laser.height);
+        
+        context.strokeStyle = '#FF4500';
+        context.lineWidth = 1;
+        context.globalAlpha = 0.7;
+        context.strokeRect(laser.x - laser.width/2 - 1, laser.y - 1, laser.width + 2, laser.height + 2);
+        context.globalAlpha = 1;
+      });
+      
       context.fillStyle = 'rgba(255, 215, 0, 0.3)';
       context.fillRect(0, 0, canvas.width, wallSize);
       context.fillRect(0, 0, wallSize, canvas.height);
       context.fillRect(canvas.width - wallSize, 0, wallSize, canvas.height);
       
-      // Кирпичи
       bricks.forEach(brick => {
         context.fillStyle = brick.color;
         context.fillRect(brick.x, brick.y, brick.width, brick.height);
@@ -668,19 +1829,33 @@
         context.fillText(brick.city, brick.x + brick.width/2, brick.y + brick.height/2);
       });
       
-      // Бонусы
-      bonuses.forEach(bonus => {
-        context.fillStyle = bonus.color;
-        context.fillRect(bonus.x, bonus.y, bonus.width, bonus.height);
+      drawBonuses(bonuses);
+      drawSymbolBonuses(decemberBonuses, 15);
+      drawSymbolBonuses(lightningBonuses, 15);
+      drawSymbolBonuses(bigBallBonuses, 20);
+      drawSymbolBonuses(twinBonuses, 15);
+      drawSymbolBonuses(extendBonuses, 20);
+      drawSymbolBonuses(laserBonuses, 15);
+      drawSymbolBonuses(catchBonuses, 15);
+      drawSymbolBonuses(slowBonuses, 15);
+      drawSymbolBonuses(disruptionBonuses, 15);
+      drawSymbolBonuses(playerBonuses, 15);
+      
+      lightningEffects.forEach(effect => {
+        context.strokeStyle = '#FFFF00';
+        context.lineWidth = 2;
+        context.globalAlpha = effect.life / 10;
         
-        context.fillStyle = '#000000';
-        context.font = 'bold 7px Arial';
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.fillText(bonus.text, bonus.x + bonus.width/2, bonus.y + bonus.height/2);
+        effect.segments.forEach(segment => {
+          context.beginPath();
+          context.moveTo(segment.x1, segment.y1);
+          context.lineTo(segment.x2, segment.y2);
+          context.stroke();
+        });
+        
+        context.globalAlpha = 1;
       });
       
-      // Эффекты текста с наградами
       rewardTexts.forEach(text => {
         context.fillStyle = `rgba(255, 215, 0, ${text.alpha})`;
         context.font = 'bold 12px Arial';
@@ -689,7 +1864,15 @@
         context.fillText(text.text, text.x, text.y);
       });
       
-      // Платформа с надписью PERVUSHIN
+      particles.forEach(p => {
+        context.fillStyle = p.color;
+        context.globalAlpha = p.life / 30;
+        context.beginPath();
+        context.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        context.fill();
+        context.globalAlpha = 1;
+      });
+      
       context.fillStyle = '#ffd700';
       context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
       
@@ -699,18 +1882,84 @@
       context.textBaseline = 'middle';
       context.fillText('PERVUSHIN', paddle.x + paddle.width/2, paddle.y + paddle.height/2);
       
-      // Мяч
-      context.fillStyle = '#ffd700';
-      context.beginPath();
-      context.arc(ball.x + ball.width/2, ball.y + ball.height/2, ball.width/2, 0, Math.PI * 2);
-      context.fill();
+      if (duetBonusActive) {
+        context.fillStyle = '#FF69B4';
+        context.fillRect(paddle2.x, paddle2.y, paddle2.width, paddle2.height);
+        
+        context.fillStyle = '#000000';
+        context.font = 'bold 8px Arial';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText('DUET', paddle2.x + paddle2.width/2, paddle2.y + paddle2.height/2);
+      }
+      
+      balls.forEach(ball => {
+        if (megaBallActive) {
+          context.fillStyle = '#FFFF00';
+          context.beginPath();
+          context.arc(ball.x + ball.width/2, ball.y + ball.height/2, ball.width/2, 0, Math.PI * 2);
+          context.fill();
+          
+          context.strokeStyle = '#FFFF00';
+          context.lineWidth = 2;
+          context.globalAlpha = 0.5;
+          context.beginPath();
+          context.arc(ball.x + ball.width/2, ball.y + ball.height/2, ball.width/2 + 3, 0, Math.PI * 2);
+          context.stroke();
+          context.globalAlpha = 1;
+        } else if (bigBallBonusActive) {
+          context.fillStyle = '#FF00FF';
+          context.beginPath();
+          context.arc(ball.x + ball.width/2, ball.y + ball.height/2, ball.width/2, 0, Math.PI * 2);
+          context.fill();
+          
+          context.strokeStyle = '#FF00FF';
+          context.lineWidth = 3;
+          context.globalAlpha = 0.5;
+          context.beginPath();
+          context.arc(ball.x + ball.width/2, ball.y + ball.height/2, ball.width/2 + 4, 0, Math.PI * 2);
+          context.stroke();
+          context.globalAlpha = 1;
+        } else {
+          context.fillStyle = '#ffd700';
+          context.beginPath();
+          context.arc(ball.x + ball.width/2, ball.y + ball.height/2, ball.width/2, 0, Math.PI * 2);
+          context.fill();
+        }
+      });
+      
+      context.restore();
+    }
+
+    // Универсальные функции отрисовки бонусов
+    function drawBonuses(bonusArray) {
+      bonusArray.forEach(bonus => {
+        context.fillStyle = bonus.color;
+        context.fillRect(bonus.x, bonus.y, bonus.width, bonus.height);
+        
+        context.fillStyle = '#000000';
+        context.font = 'bold 7px Arial';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(bonus.text, bonus.x + bonus.width/2, bonus.y + bonus.height/2);
+      });
+    }
+
+    function drawSymbolBonuses(bonusArray, fontSize) {
+      bonusArray.forEach(bonus => {
+        context.fillStyle = bonus.color;
+        context.font = `bold ${fontSize}px Arial`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(bonus.text, bonus.x, bonus.y);
+      });
     }
 
     // Завершение уровня
     function levelComplete() {
       gameRunning = false;
-      document.getElementById('bonusAmount').textContent = score.toLocaleString();
-      thanksScreen.style.display = 'block';
+      document.getElementById('totalScore').textContent = score.toLocaleString();
+      finalScreen.style.display = 'block';
     }
 
     // Конец игры
@@ -720,14 +1969,40 @@
       gameOverScreen.style.display = 'block';
     }
 
-    // Перезапуск
-    document.getElementById('restartBtn').addEventListener('click', () => {
+    // WhatsApp кнопка
+    whatsappBtn.addEventListener('click', () => {
+      const phoneNumber = '89993053019';
+      const message = 'Привет! Только что прошел твою игру PERVUSHIN.EVENT! 🎮 Хочу обсудить сотрудничество!';
+      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    });
+
+    // Кнопка перезапуска в финальном экране
+    finalRestartBtn.addEventListener('click', () => {
       score = 0;
       level = 1;
       lives = 3;
       bonusActive = false;
       bonusMultiplier = 1;
+      decemberBonusActive = false;
+      lightningBonusActive = false;
+      megaBallActive = false;
+      bigBallBonusActive = false;
+      snowEffectActive = false;
+      snowflakes = [];
+      comboSmileys = [];
+      comboCount = 0;
+      screenShake = 0;
+      duetBonusActive = false;
+      extendBonusActive = false;
+      laserBonusActive = false;
+      catchBonusActive = false;
+      slowBonusActive = false;
+      disruptionBonusActive = false;
+      playerBonusActive = false;
+      lasers = [];
       countdown = 5;
+      finalScreen.style.display = 'none';
       gameOverScreen.style.display = 'none';
       countdownElement.style.display = 'flex';
       countdownElement.textContent = countdown;
@@ -737,11 +2012,33 @@
       startCountdown();
     });
 
-    // Продолжить
-    document.getElementById('continueBtn').addEventListener('click', () => {
-      level++;
-      thanksScreen.style.display = 'none';
+    // Перезапуск
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      score = 0;
+      level = 1;
+      lives = 3;
+      bonusActive = false;
+      bonusMultiplier = 1;
+      decemberBonusActive = false;
+      lightningBonusActive = false;
+      megaBallActive = false;
+      bigBallBonusActive = false;
+      snowEffectActive = false;
+      snowflakes = [];
+      comboSmileys = [];
+      comboCount = 0;
+      screenShake = 0;
+      duetBonusActive = false;
+      extendBonusActive = false;
+      laserBonusActive = false;
+      catchBonusActive = false;
+      slowBonusActive = false;
+      disruptionBonusActive = false;
+      playerBonusActive = false;
+      lasers = [];
       countdown = 5;
+      gameOverScreen.style.display = 'none';
+      finalScreen.style.display = 'none';
       countdownElement.style.display = 'flex';
       countdownElement.textContent = countdown;
       createLevel();
@@ -759,7 +2056,6 @@
       canvas.width = containerWidth;
       canvas.height = containerWidth / aspectRatio;
       
-      // Позиционируем платформу НИЖЕ
       paddle.y = canvas.height - 30;
       paddle.x = (canvas.width - paddle.width) / 2;
       
